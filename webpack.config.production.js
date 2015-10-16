@@ -11,7 +11,10 @@ var config = Object.create(baseConfig);
 
 config.devtool = 'source-map';
 
-config.entry = './app/index';
+config.entry = {
+  renderer: './renderer/index',
+  main: './main/index',
+};
 
 config.output.publicPath = '/dist/';
 
@@ -28,7 +31,7 @@ config.module.loaders.push({
   test: /\.module\.css$/,
   loader: stylesTextPlugin.extract(
     'style-loader',
-    'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+    'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
   )
 });
 

@@ -1,6 +1,7 @@
 var path = require('path');
 
 module.exports = {
+  context: path.join(__dirname, 'app'),
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -13,9 +14,9 @@ module.exports = {
     }]
   },
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
-    libraryTarget: 'commonjs2'
+    path: path.join(__dirname, 'app/dist'),
+    filename: '[name].js',
+    // libraryTarget: 'commonjs2'
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],

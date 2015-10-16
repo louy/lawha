@@ -23,9 +23,9 @@ app.on('ready', function() {
   });
 
   if (process.env.HOT) {
-    mainWindow.loadUrl('file://' + __dirname + '/app/hot-dev-app.html');
+    mainWindow.loadUrl('file://' + __dirname + '/app/renderer/hot-dev-app.html');
   } else {
-    mainWindow.loadUrl('file://' + __dirname + '/app/app.html');
+    mainWindow.loadUrl('file://' + __dirname + '/app/renderer/app.html');
   }
 
   mainWindow.on('closed', function() {
@@ -224,11 +224,5 @@ app.on('ready', function() {
     mainWindow.setMenu(menu);
   }
 
-  // Actions
-  var ipc = require('electron-safe-ipc/host');
-
-  ipc.on('fromRenderer', function () {
-    console.log('fromRenderer received', arguments);
-  });
-  ipc.send('fromMain', 1, 2);
+  require('./app/dist/main');
 });
