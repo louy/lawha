@@ -1,0 +1,24 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "react/sort-comp": [1, {
+      "order": [
+        "mixins",
+        "lifecycle",
+        "everything-else",
+        "rendering"
+      ],
+      "groups": {
+        mixins: [
+          "mixins",
+          "stores",
+          "/^getStateFor.+$/"
+        ],
+        rendering: [
+          "render",
+          "/^render.+$/"
+        ]
+      }
+    }]
+  }
+}
