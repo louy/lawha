@@ -2,18 +2,35 @@ import flux from 'flux-react';
 
 import actions from '../actions';
 
-import MultiLoadableStore from '../../Mixins/MultiLoadableStore';
-
 const ServicesStore = flux.createStore({
-  mixins: [MultiLoadableStore],
-
   actions: [
-    actions.test,
+    actions.loadServices,
+    actions.setServices,
   ],
 
-  test() {
-    console.log('Got test!', arguments);
+  loadServices() {
+    actions.setServices([{
+      path: 'test-1',
+      name: 'Test 1',
+      description: 'Some sample service',
+      status: 'OK',
+      hasNew: false,
+    }, {
+      path: 'test-2',
+      name: 'Test 2',
+      description: 'Some sample service',
+      status: 'OK',
+      hasNew: false,
+    }, {
+      path: 'test-3',
+      name: 'Test 3',
+      description: 'Some sample service',
+      status: 'ERR',
+      hasNew: false,
+    }]);
   },
+
+  setServices() {},
 });
 
 export default ServicesStore;

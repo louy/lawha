@@ -1,8 +1,11 @@
 import flux from 'flux-react';
 
 const actions = flux.createActions([
-  'test',
   'setServices',
+  'loadServices',
+
+  'loadServiceDetails',
+  'setServiceDetails',
 ]);
 
 export default actions;

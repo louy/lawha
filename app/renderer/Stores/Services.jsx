@@ -2,23 +2,23 @@ import flux from 'flux-react';
 
 import actions from '../actions';
 
-import MultiLoadableStore from '../../Mixins/MultiLoadableStore';
-
 const ServicesStore = flux.createStore({
-  mixins: [MultiLoadableStore],
   services: [],
   servicesMap: {},
 
   actions: [
+    actions.loadServices,
     actions.setServices,
   ],
+
+  loadServices() {},
 
   setServices(services) {
     this.services = services;
 
     const servicesMap = {};
     services.forEach((service, index) => {
-      servicesMap[service.id] = index;
+      servicesMap[service.path] = index;
     });
     this.servicesMap = servicesMap;
 

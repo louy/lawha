@@ -1,5 +1,7 @@
 import React from 'react';
 
+import actions from '../actions';
+
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Body from './Body';
@@ -13,18 +15,25 @@ const App = React.createClass({
   getStateForServicesStore() {
     return {
       services: ServicesStore.getServices(),
+      selectedId: null,
     };
+  },
+
+  componentWillMount() {
+    actions.loadServices();
   },
 
   render() {
     const items = this.state.services.map((service) => {
       return {
-        id: service.name,
+        id: service.path,
         title: service.name,
         subtitle: service.description,
         icon: service.status,
       };
     });
+
+    const {selectedId} = this.state;
 
     return (
       <div className="window">
@@ -32,7 +41,7 @@ const App = React.createClass({
 
         <div className="window-content">
           <div className="pane-group">
-            <Sidebar items={items}/>
+            <Sidebar items={items} onChange={(item) => {this.setState({ selectedId: item.id });}} selectedId={selectedId} />
             <Body />
           </div>
         </div>

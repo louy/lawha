@@ -15,6 +15,17 @@ const Sidebar = React.createClass({
       subtitle: React.PropTypes.string.isRequired,
       icon: React.PropTypes.string,
     })).isRequired,
+    selectedId: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number,
+    ]),
+    onChange: React.PropTypes.func,
+  },
+
+  getDefaultProps() {
+    return {
+      onChange: () => {},
+    };
   },
 
   getInitialState() {
@@ -42,9 +53,16 @@ const Sidebar = React.createClass({
   },
 
   renderItem(item) {
+    const style = {width: 32, height: 32, textAlign: 'center', fontSize: 16, background: '#ccc', borderRadius: '50%', lineHeight: '32px', fontWeight: '600'};
+
+    let className = 'list-group-item';
+    if (this.props.selectedId === item.id) {
+      className += ' selected';
+    }
+
     return (
-      <li className="list-group-item" key={item.id}>
-        <span className="img-circle media-object pull-left" style={{width:32, height:32, textAlign: 'center', fontSize: 20, background: '#ccc', borderRadius: '50%', lineHeight: '32px', fontWeight: '600'}}>{item.icon}</span>
+      <li className={className} key={item.id} onClick={() => this.props.onChange(item)}>
+        <span className="img-circle media-object pull-left" style={style}>{item.icon}</span>
         <div className="media-body">
           <strong>{item.title}</strong>
           <p>{item.subtitle}</p>
