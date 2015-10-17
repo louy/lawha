@@ -1,17 +1,17 @@
 import flux from 'flux-react';
 
+// p: private
 const actions = flux.createActions([
   'loadServices',
-  'getServices',
-
-  'loadServiceDetails',
-  'setServiceDetails',
+  'getServices', // p
 
   'startService',
   'stopService',
+  '_startService', // p
+  '_stopService', // p
 
   'loadService',
-  'getService',
+  'getService', // p
 ]);
 
 export default actions;

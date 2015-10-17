@@ -5,6 +5,13 @@ import actions from '../actions';
 import ListensToStore from '../../Mixins/ListensToStore';
 import ServiceStore from '../Stores/Service';
 
+const signals = [
+  'SIGINT',
+  'SIGINT',
+  'SIGTERM',
+  'SIGKILL',
+];
+
 const Body = React.createClass({
   mixins: [new ListensToStore('ServiceStore', ServiceStore)],
 
@@ -25,11 +32,11 @@ const Body = React.createClass({
   getInitialState() {
     return {
       service: this.props.service,
+      lastSignal: null,
     };
   },
 
   componentWillMount() {
-    console.log('props', this.props);
     actions.loadService(this.props.service);
   },
 
@@ -40,6 +47,28 @@ const Body = React.createClass({
       });
       actions.loadService(nextProps.service);
     }
+  },
+
+  getNextSignal() {
+    let lastSignal = this.state.lastSignal == null ? -1 : this.state.lastSignal;
+    ++ lastSignal;
+
+    this.setState({
+      lastSignal,
+    });
+
+    return signals[Math.min(lastSignal, signals.length - 1)];
+  },
+
+  startService() {
+    this.setState({ lastSignal: null });
+    actions.startService(this.props.service);
+  },
+
+  stopService() {
+    const signal = this.getNextSignal();
+    console.log('sending signal', signal);
+    actions.stopService(this.props.service, signal);
   },
 
   render() {
@@ -63,9 +92,9 @@ const Body = React.createClass({
           </div>
           <div className="aligner-item aligner-item--grow-1">
           {data.status === true ? (
-            <button className="btn btn-large btn-negative">Stop</button>
+            <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
           ) : (
-            <button className="btn btn-large btn-primary">Start</button>
+            <button className="btn btn-large btn-primary" onClick={this.startService}>Start</button>
           )}
           </div>
         </div>

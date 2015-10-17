@@ -29,7 +29,7 @@ export default {
   errorMessage: null,
   // data: null,
 
-  triggerLoad() {
+  triggerLoad(...args) {
     if (this.isLoading) return false;
 
     if (!this.getRequest) throw new Error('`getRequest` is not implemented.');
@@ -41,7 +41,7 @@ export default {
 
     const _this = this;
 
-    this.request = this.getRequest().then(function success(data) {
+    this.request = this.getRequest(...args).then(function success(data) {
       _this.data = data;
       _this.done && _this.done.apply(_this, arguments);
       _this.emit('data');

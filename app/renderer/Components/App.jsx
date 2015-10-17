@@ -15,6 +15,11 @@ const App = React.createClass({
   getStateForServiceStore() {
     return {
       services: ServiceStore.getData('_') || [],
+    };
+  },
+
+  getInitialState() {
+    return {
       selectedId: null,
     };
   },
@@ -46,6 +51,8 @@ const App = React.createClass({
       };
     });
 
+    console.log('this.state', this.state);
+
     const {selectedId} = this.state;
 
     return (
@@ -54,7 +61,10 @@ const App = React.createClass({
 
         <div className="window-content">
           <div className="pane-group">
-            <Sidebar items={items} onChange={(item) => {this.setState({ selectedId: item.id });}} selectedId={selectedId} />
+            <Sidebar items={items} onChange={(item) => {
+              console.log('selected', item);
+              this.setState({ selectedId: item.id });
+            }} selectedId={selectedId} />
             <Body service={selectedId} />
           </div>
         </div>

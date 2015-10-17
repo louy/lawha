@@ -82,7 +82,7 @@ export default {
     this.emit(id + '.meta');
   },
 
-  triggerLoad(id) {
+  triggerLoad(id, ...args) {
     if (this.isLoading(id)) return false;
 
     if (!this.getRequest) throw new Error('`getRequest` is not implemented.');
@@ -95,7 +95,7 @@ export default {
 
     const _this = this;
 
-    this.requests[id] = this.getRequest(id).then(function done(data) {
+    this.requests[id] = this.getRequest(id, ...args).then(function done(data) {
       _this.data(id, data);
       _this.done && _this.done(id, data);
       _this.emit(id + '.data');

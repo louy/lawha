@@ -10,7 +10,7 @@ var config = Object.create(baseConfig);
 
 config.debug = true;
 
-config.devtool = 'cheap-module-eval-source-map';
+config.devtool = 'cheap-source-map';
 
 config.entry = {
   renderer: [
@@ -56,7 +56,7 @@ config.plugins.push(
   new webpack.NoErrorsPlugin(),
   new webpack.DefinePlugin({
     '__DEV__': true,
-    'process.env': JSON.stringify('development')
+    'process.env.NODE_ENV': JSON.stringify('development'),
   })
 );
 

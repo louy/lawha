@@ -9,21 +9,27 @@ import actionsRpc from '../actions-rpc';
 
 const services = [{
   cwd: '/Users/louy/Projects/um/api',
-  command: 'nodemon .',
+  command: 'nodemon',
+  args: ['.'],
   name: 'API',
   description: 'Some sample service',
   status: null,
   hasNew: false,
+  commands: {
+    'Restart': 'rs',
+  },
 }, {
   cwd: '/Users/louy/Projects/um/manage',
-  command: 'nodemon .',
+  command: 'nodemon',
+  args: ['.'],
   name: 'Manage',
   description: 'Some sample service',
   status: null,
   hasNew: false,
 }, {
   cwd: '/Users/louy/Projects/um/rabbit-transforms',
-  command: 'nodemon .',
+  command: 'nodemon',
+  args: ['.'],
   name: 'Rabbit Transforms',
   description: 'Some sample service',
   status: null,
@@ -48,8 +54,10 @@ const ServicesStore = flux.createStore({
     actions.loadServices,
     actionsRpc.getServices,
 
-    actionsRpc.startService,
-    actionsRpc.stopService,
+    actions.startService,
+    actions.stopService,
+    actionsRpc._startService,
+    actionsRpc._stopService,
 
     actions.loadService,
     actionsRpc.getService,
@@ -61,55 +69,77 @@ const ServicesStore = flux.createStore({
     resolve(services);
   },
 
-  startService(resolve, reject, serviceName) {
+  startService() {},
+  _startService(resolve, reject, serviceName) {
     const index = servicesMap[serviceName];
-    if (!index) {
-      return reject(new Error('Service ' + serviceName + ' doesn\'t exist'));
+    if (index == null) {
+      const err = new Error('Service ' + serviceName + ' doesn\'t exist');
+      console.warn(err);
+      return reject(err);
     }
 
     if (children[index]) {
-      throw reject(new Error('Service ' + serviceName + ' is already running'));
+      const err = new Error('Service ' + serviceName + ' is already running');
+      console.warn(err);
+      throw reject(err);
     }
 
     const service = services[index];
 
-    let child = spawn(service.command, service.args, {
-      cwd: service.cwd,
-      env: process.env,
-    });
-    children[index] = child;
-    service.status = true;
+    console.log('starting', service, process.env);
 
-    child.stdout.on('data', function onStdout(data) {
-      console.log('stdout: ' + data);
-    });
+    try {
+      let child = spawn(service.command, service.args || [], {
+        cwd: service.cwd,
+        env: process.env,
+      });
+      children[index] = child;
+      service.status = true;
 
-    child.stderr.on('data', function onStderr(data) {
-      console.log('stderr: ' + data);
-    });
+      child.stdout.on('data', function onStdout(data) {
+        console.log('stdout: ' + data);
+      });
 
-    child.on('close', function onClose(code) {
-      console.log('child process exited with code ' + code);
-      service.status = code;
-      children[index] = null;
-      child = null;
-    });
+      child.stderr.on('data', function onStderr(data) {
+        console.log('stderr: ' + data);
+      });
+
+      child.on('close', function onClose(code) {
+        console.log('child process exited with code ' + code);
+        service.status = code;
+        children[index] = null;
+        child = null;
+      });
+
+      resolve();
+    } catch(e) {
+      if (child) {
+        console.error('Child is still running!');
+      }
+
+      console.error(require('util').inspect(e));
+      reject(e);
+    }
   },
 
-  stopService(resolve, reject, serviceName, signal = 1) {
+  stopService() {},
+  _stopService(resolve, reject, serviceName, signal = 'SIGTERM') {
     const index = servicesMap[serviceName];
-    if (!index) {
-      return reject(new Error('Service ' + serviceName + ' doesn\'t exist'));
+    if (index == null) {
+      return reject({ message: 'Service ' + serviceName + ' doesn\'t exist' });
     }
 
     if (!children[index]) {
-      throw reject(new Error('Service ' + serviceName + ' is not running'));
+      throw reject({ message: 'Service ' + serviceName + ' is not running' });
     }
 
     const child = children[index];
     // const service = services[index];
 
+    console.log('Stopping ' + serviceName + ' with signal ', signal);
+
     child.kill(signal);
+    resolve();
   },
 
   loadService() {},

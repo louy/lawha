@@ -10,6 +10,7 @@ ipc.respond('fromRenderer', function fromRenderer(action, ...args) {
     return err;
   }
   return new Promise((resolve, reject) => {
+    console.log('calling '+action+' with arguments', resolve, reject, ...args);
     _actions[action](resolve, reject, ...args);
   });
 });
