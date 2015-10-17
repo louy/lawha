@@ -88,6 +88,12 @@ const ServicesStore = flux.createStore({
       let child = spawn(service.command, service.args || [], {
         cwd: service.cwd,
         env: process.env,
+      }).on('error', (err) => {
+        service.output.push({
+          type: 'system',
+          ts: +new Date(),
+          data: 'child process error ' + JSON.stringify(err) + '\n',
+        });
       });
       children[index] = child;
       service.status = true;
@@ -132,7 +138,7 @@ const ServicesStore = flux.createStore({
         service.output.push({
           type: 'system',
           ts: +new Date(),
-          data: 'child process exited with code ' + JSON.stringify(code),
+          data: 'child process exited with code ' + JSON.stringify(code) + '\n',
         });
         service.status = code;
         children[index] = null;
@@ -208,7 +214,7 @@ const ServicesStore = flux.createStore({
     service.output.push({
       type: 'stdin',
       ts: +new Date(),
-      data: command,
+      data: command + '\n',
     });
 
     resolve();

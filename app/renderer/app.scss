@@ -14,10 +14,6 @@
   .stdin {
     background: rgb(125, 125, 0);
     color: white;
-    &:after {
-      display: block;
-      content: "";
-    }
   }
   .command {
     display: block;

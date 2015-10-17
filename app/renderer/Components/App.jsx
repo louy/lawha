@@ -33,13 +33,13 @@ const App = React.createClass({
       let iconBackground;
       switch (service.status) {
       case null:
-        iconBackground = 'gray';
+        iconBackground = '#ccc';
         break;
       case true:
         iconBackground = 'green';
         break;
       default:
-        iconBackground = 'red';
+        iconBackground = service.status > 0 ? 'red' : '#bada55';
       }
 
       return {
