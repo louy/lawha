@@ -68,7 +68,6 @@ const Body = React.createClass({
 
   stopService() {
     const signal = this.getNextSignal();
-    console.log('sending signal', signal);
     actions.stopService(this.props.service, signal);
   },
 
@@ -125,7 +124,8 @@ const Body = React.createClass({
             </div>
           ) : null}
 
-          <Console chunks={data ? data.output : null} isRunning={data ? data.status === true : false} onCommand={this.sendCommand} />
+          <Console chunks={data ? data.output : null} isRunning={data ? data.status === true : false}
+                    onCommand={this.sendCommand} service={service} numberOfLines={data ? data.numberOfLines : 0} />
         </div>
       </div>
     );

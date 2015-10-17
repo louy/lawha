@@ -15,6 +15,8 @@ const actions = flux.createActions([
 
   'sendCommand',
   '_sendCommand', // p
+
+  'setServiceReadLines',
 ]);
 
 export default actions;

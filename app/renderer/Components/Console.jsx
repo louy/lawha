@@ -3,6 +3,8 @@ import React from 'react';
 import Convert from 'ansi-to-html';
 let convert;
 
+import actions from '../actions';
+
 const entityMap = {
   '&': '&amp;',
   '<': '&lt;',
@@ -21,12 +23,14 @@ function escapeHtml(string) {
 const Console = React.createClass({
   propTypes: {
     chunks: React.PropTypes.arrayOf(React.PropTypes.shape({
-      type: React.PropTypes.oneOf('stdin', 'stdout', 'stderr', 'system', 'command', 'signal'),
+      type: React.PropTypes.oneOf(['stdin', 'stdout', 'stderr', 'system', 'command', 'signal']),
       ts: React.PropTypes.number.isRequired,
       data: React.PropTypes.string.isRequired,
     })),
     isRunning: React.PropTypes.bool.isRequired,
     onCommand: React.PropTypes.func.isRequired,
+    service: React.PropTypes.string.isRequired,
+    numberOfLines: React.PropTypes.number.isRequired,
   },
 
   componentWillUpdate() {
@@ -35,10 +39,12 @@ const Console = React.createClass({
     this.isAtEnd = scrollTop + clientHeight >= scrollHeight;
   },
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(/* prevProps, prevState*/) {
     if (this.isAtEnd) {
       const pre = React.findDOMNode(this.refs.pre);
       pre.scrollTop = pre.scrollHeight;
+
+      actions.setServiceReadLines(this.props.service, this.props.numberOfLines);
     }
   },
 
@@ -50,7 +56,7 @@ const Console = React.createClass({
       const input = React.findDOMNode(this.refs.input);
       const {value} = input;
       let shouldSend = false;
-      if (value[value.length-1] === '\\') {
+      if (value[value.length - 1] === '\\') {
         if (window.getSelection && window.getSelection() && window.getSelection().toString()) {
           shouldSend = true;
         }

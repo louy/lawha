@@ -15,6 +15,7 @@ const Sidebar = React.createClass({
       subtitle: React.PropTypes.string.isRequired,
       icon: React.PropTypes.string,
       iconBackground: React.PropTypes.string,
+      indicator: React.PropTypes.string,
     })).isRequired,
     selectedId: React.PropTypes.oneOfType([
       React.PropTypes.string,
@@ -76,6 +77,12 @@ const Sidebar = React.createClass({
       background: item.iconBackground || '#ccc',
     };
 
+    const indicatorStyle = {
+      width: 20, height: 20, textAlign: 'center', fontSize: 10, borderRadius: '50%', lineHeight: '20px',
+      margin: '8px 0 0',
+      background: item.indicator ? '#ccc' : 'transparent',
+    };
+
     let className = 'list-group-item';
     if (this.props.selectedId === item.id) {
       className += ' selected';
@@ -87,6 +94,7 @@ const Sidebar = React.createClass({
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}>
         <span className="img-circle media-object pull-left" style={iconStyle}>{item.icon}</span>
+        <span className="img-circle media-object pull-right" style={indicatorStyle}>{item.indicator}</span>
         <div className="media-body">
           <strong>{item.title}</strong>
           <p>{item.subtitle}</p>

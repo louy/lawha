@@ -35,7 +35,18 @@ const App = React.createClass({
   },
 
   render() {
-    const items = this.state.services.map((service) => {
+    const services = this.state.services.sort(function compareServices(service1, service2) {
+      const v1 = service1.lastChanged || 0;
+      const v2 = service2.lastChanged || 0;
+      if (v1 < v2) {
+        return 1;
+      } else if (v1 > v2) {
+        return -1;
+      }
+      return 0;
+    });
+
+    const items = services.map((service) => {
       let iconBackground;
       switch (service.status) {
       case null:
@@ -54,6 +65,7 @@ const App = React.createClass({
         subtitle: service.description,
         icon: service.status == null || service.status === true ? '' : (service.status + ''),
         iconBackground,
+        indicator: (service.numberOfLines - ServiceStore.getServiceReadLines(service.id)) || null,
       };
     });
 

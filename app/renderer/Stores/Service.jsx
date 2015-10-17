@@ -22,9 +22,12 @@ const ServiceStore = flux.createStore({
 
     actions.sendCommand,
     actions._sendCommand,
+
+    actions.setServiceReadLines,
   ],
 
   map: {},
+  lines: {},
 
   getRequest(id, ...args) {
     if (id === '_') {
@@ -117,6 +120,16 @@ const ServiceStore = flux.createStore({
     this.triggerLoad('_.command.'+service, command);
   },
   _sendCommand() {},
+
+  setServiceReadLines(id, lines) {
+    this.lines[id] = lines;
+  },
+
+  exports: {
+    getServiceReadLines(id) {
+      return this.lines[id];
+    },
+  },
 });
 
 export default ServiceStore;
