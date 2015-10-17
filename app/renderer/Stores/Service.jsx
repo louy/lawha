@@ -122,12 +122,14 @@ const ServiceStore = flux.createStore({
   _sendCommand() {},
 
   setServiceReadLines(id, lines) {
+    if (this.lines[id] === lines) return;
     this.lines[id] = lines;
+    this.emit('_.lines');
   },
 
   exports: {
     getServiceReadLines(id) {
-      return this.lines[id];
+      return this.lines[id] || 0;
     },
   },
 });

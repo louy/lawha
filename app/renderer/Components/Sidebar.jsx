@@ -15,7 +15,7 @@ const Sidebar = React.createClass({
       subtitle: React.PropTypes.string.isRequired,
       icon: React.PropTypes.string,
       iconBackground: React.PropTypes.string,
-      indicator: React.PropTypes.string,
+      indicator: React.PropTypes.number,
     })).isRequired,
     selectedId: React.PropTypes.oneOfType([
       React.PropTypes.string,
