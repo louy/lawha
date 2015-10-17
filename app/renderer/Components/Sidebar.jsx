@@ -37,6 +37,14 @@ const Sidebar = React.createClass({
   },
 
   filterItemForSearch(search, item) {
+    if (!item.title) {
+      console.log('item without title');
+      return false;
+    }
+    if (search.length === 0 && search[0] === '') {
+      return true;
+    }
+
     return search.every(word => item.title.toLowerCase().indexOf(word) > -1);
   },
 
