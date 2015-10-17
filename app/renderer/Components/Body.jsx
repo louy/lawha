@@ -5,13 +5,7 @@ import actions from '../actions';
 import ListensToStore from '../../Mixins/ListensToStore';
 import ServiceStore from '../Stores/Service';
 import Console from './Console';
-
-const signals = [
-  'SIGINT',
-  'SIGINT',
-  'SIGTERM',
-  'SIGKILL',
-];
+import ServiceActions from './ServiceActions';
 
 const Body = React.createClass({
   mixins: [new ListensToStore('ServiceStore', ServiceStore)],
@@ -50,27 +44,6 @@ const Body = React.createClass({
     }
   },
 
-  getNextSignal() {
-    let lastSignal = this.state.lastSignal == null ? -1 : this.state.lastSignal;
-    ++ lastSignal;
-
-    this.setState({
-      lastSignal,
-    });
-
-    return signals[Math.min(lastSignal, signals.length - 1)];
-  },
-
-  startService() {
-    this.setState({ lastSignal: null });
-    actions.startService(this.props.service);
-  },
-
-  stopService() {
-    const signal = this.getNextSignal();
-    actions.stopService(this.props.service, signal);
-  },
-
   sendCommand(command) {
     actions.sendCommand(this.props.service, command);
   },
@@ -107,11 +80,7 @@ const Body = React.createClass({
             </div>
 
             <div className="aligner-item aligner-item--grow-1 body-actions">
-            {data.status === true ? (
-              <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
-            ) : (
-              <button className="btn btn-large btn-primary" onClick={this.startService}>Start</button>
-            )}
+              <ServiceActions service={data.id} actions={data.actions} status={data.status} />
             </div>
           </div>
           ) : null}
