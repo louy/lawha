@@ -6,11 +6,17 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Body from './Body';
 
+import Interval from '../../Mixins/Interval';
 import ListensToStore from '../../Mixins/ListensToStore';
 import ServiceStore from '../Stores/Service';
 
 const App = React.createClass({
-  mixins: [new ListensToStore('ServiceStore', ServiceStore, '_.*')],
+  mixins: [
+    new ListensToStore('ServiceStore', ServiceStore, '_.*'),
+    new Interval(5000, function reloadServices() {
+      actions.loadServices();
+    }),
+  ],
 
   getStateForServiceStore() {
     return {
