@@ -137,6 +137,8 @@ const ServicesStore = flux.createStore({
         service.status = code;
         children[index] = null;
         child = null;
+
+        actions.loadService(serviceName); // Trigger a reload
       });
 
       resolve();

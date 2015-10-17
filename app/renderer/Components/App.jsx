@@ -51,8 +51,6 @@ const App = React.createClass({
       };
     });
 
-    console.log('this.state', this.state);
-
     const {selectedId} = this.state;
 
     return (
@@ -62,8 +60,9 @@ const App = React.createClass({
         <div className="window-content">
           <div className="pane-group">
             <Sidebar items={items} onChange={(item) => {
-              console.log('selected', item);
-              this.setState({ selectedId: item.id });
+              let {id} = item;
+              if (this.state.selectedId === id) id = null;
+              this.setState({ selectedId: id });
             }} selectedId={selectedId} />
             <Body service={selectedId} />
           </div>

@@ -83,7 +83,9 @@ const Body = React.createClass({
     if (!service) {
       return (
         <div className="pane">
-          <p>Please select a service from the left.</p>
+          <div className="large-message">
+            <p>Please select a service from the left.</p>
+          </div>
         </div>
       );
     }
@@ -92,7 +94,7 @@ const Body = React.createClass({
       <div className="pane pane--scroll">
         <div className="pane-title">
           {data ? (
-          <div className="aligner aligner--horizontal aligner--center">
+          <div className="aligner aligner--horizontal aligner--center body-title">
             <div className="aligner-item aligner-item--grow-3">
               <h2>{data.name}</h2>
             </div>
@@ -105,7 +107,7 @@ const Body = React.createClass({
             ) : null}
             </div>
 
-            <div className="aligner-item aligner-item--grow-1">
+            <div className="aligner-item aligner-item--grow-1 body-actions">
             {data.status === true ? (
               <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
             ) : (
@@ -117,7 +119,7 @@ const Body = React.createClass({
         </div>
         <div className="pane-content">
           {isError ? (
-            <div>
+            <div className="large-message">
               <p>An error has occurred.</p>
               <p>{errorMessage}</p>
             </div>
