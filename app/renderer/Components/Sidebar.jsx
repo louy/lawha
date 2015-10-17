@@ -38,6 +38,23 @@ const Sidebar = React.createClass({
     return search.every(word => item.title.toLowerCase().indexOf(word) > -1);
   },
 
+  onMouseEnter(e) {
+    let {target} = e;
+    while (target.className.indexOf('list-group-item') === -1) {
+      target = target.parentElement;
+      if (!target) return;
+    }
+    target.className += ' hover';
+  },
+  onMouseLeave(e) {
+    let {target} = e;
+    while (target.className.indexOf('list-group-item') === -1) {
+      target = target.parentElement;
+      if (!target) return;
+    }
+    target.className = target.className.replace(/\shover/g, '');
+  },
+
   render() {
     const search = this.state.search.toLowerCase().split(' ');
     return (
@@ -61,7 +78,10 @@ const Sidebar = React.createClass({
     }
 
     return (
-      <li className={className} key={item.id} onClick={() => this.props.onChange(item)}>
+      <li className={className} key={item.id}
+          onClick={() => this.props.onChange(item)}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}>
         <span className="img-circle media-object pull-left" style={style}>{item.icon}</span>
         <div className="media-body">
           <strong>{item.title}</strong>

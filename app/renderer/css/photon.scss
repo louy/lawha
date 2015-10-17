@@ -720,6 +720,14 @@ img {
   color: #fff;
   background-color: #116cd6;
 }
+.list-group:active .list-group-item {
+  color: inherit;
+  background-color: transparent;
+  &.hover {
+    color: #fff;
+    background-color: #116cd6;
+  }
+}
 
 .list-group-header {
   padding: 10px;
