@@ -1,5 +1,4 @@
 // http://nodejs.org/api.html#_child_processes
-import sys from 'sys';
 import {spawn} from 'child_process';
 
 import flux from 'flux-react';
@@ -7,7 +6,7 @@ import flux from 'flux-react';
 import actions from '../actions';
 import actionsRpc from '../actions-rpc';
 
-const services = [];
+let services = [];
 
 let servicesMap = {};
 
@@ -26,7 +25,15 @@ let isSet = false;
 export function setServices(_services) {
   if (isSet) throw new Error('You can only set services once');
   isSet = true;
-  services = _services;
+  services = Object.keys(_services).map((key) => {
+    const service = _services[key];
+    service.id = key;
+    service.output = [];
+    service.status = null;
+    service.hasNew = false;
+    return service;
+  });
+
   generateMap();
 }
 
@@ -49,7 +56,7 @@ const ServicesStore = flux.createStore({
 
   loadServices() {},
 
-  getServices(resolve, reject) {
+  getServices(resolve) {
     resolve(services);
   },
 

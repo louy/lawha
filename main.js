@@ -227,7 +227,7 @@ app.on('ready', function() {
 
   try {
     var main = require('./app/dist/main');
-    var stat = fs.statSync('./services.js')
+    var stat = fs.statSync('./services.js');
     if (stat && stat.isFile()) {
       main(require('./services.js'));
     } else {

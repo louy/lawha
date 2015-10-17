@@ -5,11 +5,8 @@ module.exports = {
   //   args: ['.'],
   //   name: 'API',
   //   description: 'Some sample service',
-  //   status: null,
-  //   hasNew: false,
   //   commands: {
   //     'Restart': 'rs',
   //   },
-  //   output: [],
   // },
 };
