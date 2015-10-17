@@ -1,6 +1,7 @@
 /* eslint no-shadow: 0, func-names: 0, no-unused-vars: 0, no-console: 0 */
 var os = require('os');
 var webpack = require('webpack');
+var mainCfg = require('./webpack.config.main.js');
 var cfg = require('./webpack.config.production.js');
 var packager = require('electron-packager');
 var assign = require('object-assign');
@@ -10,7 +11,7 @@ var argv = require('minimist')(process.argv.slice(2));
 var devDeps = Object.keys(require('./package.json').devDependencies);
 
 
-var appName = argv.name || argv.n || 'ElectronReact';
+var appName = argv.name || argv.n || 'Lawha';
 var shouldUseAsar = argv.asar || argv.a || false;
 var shouldBuildAll = argv.all || false;
 
@@ -36,7 +37,7 @@ var version = argv.version || argv.v;
 
 if (version) {
   DEFAULT_OPTS.version = version;
-  startPack();
+  startMainPack();
 } else {
   // use the same version as the currently-installed electron-prebuilt
   exec('npm list | grep electron-prebuilt', function(err, stdout, stderr) {
@@ -45,13 +46,21 @@ if (version) {
     } else {
       DEFAULT_OPTS.version = stdout.split('@')[1].replace(/\s/g, '');
     }
+    startMainPack();
+  });
+}
+
+function startMainPack() {
+  console.log('start main pack...');
+  webpack(mainCfg, function runWebpackMainBuild(err, stats) {
+    if (err) return console.error(err);
     startPack();
   });
 }
 
 
 function startPack() {
-  console.log('start pack...');
+  console.log('start renderer pack...');
   webpack(cfg, function runWebpackBuild(err, stats) {
     if (err) return console.error(err);
     del('release')
