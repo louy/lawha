@@ -149,6 +149,7 @@ const ServicesStore = flux.createStore({
           });
         }
 
+        service.lastChanged = +new Date();
         actions.loadService(serviceId); // Trigger a reload
       });
 
