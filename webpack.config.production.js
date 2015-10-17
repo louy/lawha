@@ -29,18 +29,18 @@ config.module.loaders.push({
   )
 }, {
   test: /\.less$/,
-  loaders: [
+  loaders: globalStylesTextPlugin.extract(
     'style-loader',
     'css-loader',
-    'less-loader',
-  ]
+    'less-loader'
+  )
 }, {
   test: /\.s[ac]ss$/,
-  loaders: [
+  loaders: globalStylesTextPlugin.extract(
     'style-loader',
     'css-loader',
-    'sass-loader',
-  ]
+    'sass-loader'
+  )
 }, {
   test: /\.module\.css$/,
   loader: stylesTextPlugin.extract(

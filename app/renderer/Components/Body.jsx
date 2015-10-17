@@ -4,6 +4,7 @@ import actions from '../actions';
 
 import ListensToStore from '../../Mixins/ListensToStore';
 import ServiceStore from '../Stores/Service';
+import Console from './Console';
 
 const signals = [
   'SIGINT',
@@ -116,17 +117,10 @@ const Body = React.createClass({
           ) : null}
 
           {data ? (
-          <pre className="console">{data.output.map(this.renderChunk)}</pre>
+            <Console chunks={data.output} />
           ) : null}
         </div>
       </div>
-    );
-  },
-
-  renderChunk(chunk) {
-    const {type, ts, data} = chunk;
-    return (
-      <span className={type} key={ts}>{data}</span>
     );
   },
 });

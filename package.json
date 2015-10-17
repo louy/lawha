@@ -27,6 +27,7 @@
     "react-hot"
   ],
   "devDependencies": {
+    "ansi-to-html": "^0.3.0",
     "asar": "^0.8.0",
     "babel": "^5.8.23",
     "babel-core": "^5.8.23",
@@ -46,6 +47,7 @@
     "extract-text-webpack-plugin": "^0.8.2",
     "file-loader": "^0.8.4",
     "flux-react": "^2.6.6",
+    "json-loader": "^0.5.3",
     "less": "^2.5.3",
     "less-loader": "^2.2.1",
     "loader-utils": "^0.2.11",

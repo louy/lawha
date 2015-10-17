@@ -101,28 +101,38 @@ const ServicesStore = flux.createStore({
 
       child.stdout.setEncoding('utf8');
       child.stdout.on('data', function onStdout(data) {
-        console.log('stdout: ' + data);
-        service.output.push({
-          type: 'stdout',
-          ts: new Date() / 1000,
-          data,
-        });
+        const lastChunk = service.output[service.output.length-1];
+        if (lastChunk && lastChunk.type === 'stdout') {
+          lastChunk.data += data;
+          lastChunk.ts = +new Date();
+        } else {
+          service.output.push({
+            type: 'stdout',
+            ts: +new Date(),
+            data,
+          });
+        }
         actions.loadService(serviceName); // Trigger a reload
       });
 
       child.stderr.setEncoding('utf8');
       child.stderr.on('data', function onStderr(data) {
-        console.log('stderr: ' + data);
-        service.output.push({
-          type: 'stderr',
-          ts: new Date() / 1000,
-          data,
-        });
+        const lastChunk = service.output[service.output.length-1];
+        if (lastChunk && lastChunk.type === 'stderr') {
+          lastChunk.data += data;
+          lastChunk.ts = +new Date();
+        } else {
+          service.output.push({
+            type: 'stderr',
+            ts: +new Date(),
+            data,
+          });
+        }
         actions.loadService(serviceName); // Trigger a reload
       });
 
       child.on('close', function onClose(code) {
-        console.log('child process exited with code ' + code);
+        console.log('child process ' + serviceName + ' exited with code ' + code);
         service.status = code;
         children[index] = null;
         child = null;
@@ -131,7 +141,7 @@ const ServicesStore = flux.createStore({
       resolve();
     } catch(e) {
       if (child) {
-        console.error('Child is still running!');
+        console.error('Child ' + serviceName + ' is still running!');
       }
 
       console.error(require('util').inspect(e));

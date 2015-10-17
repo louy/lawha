@@ -11,6 +11,10 @@ module.exports = {
       // Fonts
       test   : /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
       loaders: ['file-loader'],
+    }, {
+      // json
+      test   : /\.json$/,
+      loaders: ['json-loader'],
     }]
   },
   output: {
