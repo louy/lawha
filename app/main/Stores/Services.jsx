@@ -18,6 +18,7 @@ const services = [{
   commands: {
     'Restart': 'rs',
   },
+  output: [],
 }, {
   cwd: '/Users/louy/Projects/um/manage',
   command: 'nodemon',
@@ -26,6 +27,7 @@ const services = [{
   description: 'Some sample service',
   status: null,
   hasNew: false,
+  output: [],
 }, {
   cwd: '/Users/louy/Projects/um/rabbit-transforms',
   command: 'nodemon',
@@ -34,6 +36,7 @@ const services = [{
   description: 'Some sample service',
   status: null,
   hasNew: false,
+  output: [],
 }];
 
 let servicesMap = {};
@@ -96,12 +99,26 @@ const ServicesStore = flux.createStore({
       children[index] = child;
       service.status = true;
 
+      child.stdout.setEncoding('utf8');
       child.stdout.on('data', function onStdout(data) {
         console.log('stdout: ' + data);
+        service.output.push({
+          type: 'stdout',
+          ts: new Date() / 1000,
+          data,
+        });
+        actions.loadService(serviceName); // Trigger a reload
       });
 
+      child.stderr.setEncoding('utf8');
       child.stderr.on('data', function onStderr(data) {
         console.log('stderr: ' + data);
+        service.output.push({
+          type: 'stderr',
+          ts: new Date() / 1000,
+          data,
+        });
+        actions.loadService(serviceName); // Trigger a reload
       });
 
       child.on('close', function onClose(code) {

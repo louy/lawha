@@ -1,0 +1,74 @@
+.console {
+  padding: 25px;
+  margin: 0;
+  overflow: scroll;
+  background: #333;
+  color: #eee;
+  min-height: 100%;
+  .stderr {
+    color: #eaa;
+  }
+}
+
+.pane--scroll {
+  height: 100%;
+}
+.pane-title {
+  height: 100px;
+}
+.pane-content {
+  position: absolute;
+  top: 100px;
+  bottom: 0;
+  overflow: auto;
+  right: 0;
+  left: 0;
+}
+
+
+.aligner {
+  display: flex;
+  &--center {
+    justify-content: center;
+    align-items: center;
+    .aligner-item {
+      text-align: center;
+    }
+  }
+  &--vertical {
+    flex-direction: column;
+  }
+  &--horizontal {
+    flex-direction: row;
+  }
+  &--wrap {
+    flex-wrap: wrap;
+  }
+  &-item {
+    &--start {
+      align-self: flex-start;
+    }
+    &--end {
+      align-self: flex-end;
+    }
+    &--grow-1 {
+      flex-grow: 1;
+    }
+    &--grow-2 {
+      flex-grow: 2;
+    }
+    &--grow-3 {
+      flex-grow: 3;
+    }
+    &--grow-4 {
+      flex-grow: 4;
+    }
+    &--grow-5 {
+      flex-grow: 5;
+    }
+  }
+}
+
+.body-actions {
+  text-align: right;
+}

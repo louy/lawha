@@ -73,7 +73,7 @@ const Body = React.createClass({
 
   render() {
     const {service} = this.props;
-    const {data, isError, errorMessage} = this.state;
+    const {data, isLoading, isError, errorMessage} = this.state;
 
     if (!service) {
       return (
@@ -84,31 +84,49 @@ const Body = React.createClass({
     }
 
     return (
-      <div className="pane">
-        {data ? (
-        <div className="aligner aligner--horizontal">
-          <div className="aligner-item aligner-item--grow-3">
-            <h2>{data.name}</h2>
+      <div className="pane pane--scroll">
+        <div className="pane-title">
+          {data ? (
+          <div className="aligner aligner--horizontal aligner--center">
+            <div className="aligner-item aligner-item--grow-3">
+              <h2>{data.name}</h2>
+            </div>
+            <div className="aligner-item aligner-item--grow-1">
+            {data.status === true ? (
+              <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
+            ) : (
+              <button className="btn btn-large btn-primary" onClick={this.startService}>Start</button>
+            )}
+            </div>
           </div>
-          <div className="aligner-item aligner-item--grow-1">
-          {data.status === true ? (
-            <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
-          ) : (
-            <button className="btn btn-large btn-primary" onClick={this.startService}>Start</button>
-          )}
-          </div>
+          ) : null}
         </div>
-        ) : null}
+        <div className="pane-content">
+          {isError ? (
+            <div>
+              <p>An error has occurred.</p>
+              <p>{errorMessage}</p>
+            </div>
+          ) : null}
 
-        {isError ? (
-          <div>
-            <p>An error has occurred.</p>
-            <p>{errorMessage}</p>
-          </div>
-        ) : null}
+          {isLoading ? (
+            <div>
+              <p>Loading...</p>
+            </div>
+          ) : null}
 
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+          {data ? (
+          <pre className="console">{data.output.map(this.renderChunk)}</pre>
+          ) : null}
+        </div>
       </div>
+    );
+  },
+
+  renderChunk(chunk) {
+    const {type, ts, data} = chunk;
+    return (
+      <span className={type} key={ts}>{data}</span>
     );
   },
 });
