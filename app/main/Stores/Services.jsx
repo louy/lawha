@@ -89,7 +89,7 @@ const ServicesStore = flux.createStore({
 
     const service = services[index];
 
-    console.log('starting', service, process.env);
+    console.log('starting', service);
 
     try {
       let child = spawn(service.command, service.args || [], {
@@ -132,7 +132,11 @@ const ServicesStore = flux.createStore({
       });
 
       child.on('close', function onClose(code) {
-        console.log('child process ' + serviceName + ' exited with code ' + code);
+        service.output.push({
+          type: 'system',
+          ts: +new Date(),
+          data: 'child process exited with code ' + JSON.stringify(code),
+        });
         service.status = code;
         children[index] = null;
         child = null;

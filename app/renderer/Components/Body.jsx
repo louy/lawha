@@ -92,6 +92,15 @@ const Body = React.createClass({
             <div className="aligner-item aligner-item--grow-3">
               <h2>{data.name}</h2>
             </div>
+
+            <div className="aligner-item aligner-item--grow-2">
+            {isLoading ? (
+              <div>
+                <p>Loading...</p>
+              </div>
+            ) : null}
+            </div>
+
             <div className="aligner-item aligner-item--grow-1">
             {data.status === true ? (
               <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
@@ -110,15 +119,7 @@ const Body = React.createClass({
             </div>
           ) : null}
 
-          {isLoading ? (
-            <div>
-              <p>Loading...</p>
-            </div>
-          ) : null}
-
-          {data ? (
-            <Console chunks={data.output} />
-          ) : null}
+          <Console chunks={data ? data.output : null} isRunning={data ? data.status === true : false} />
         </div>
       </div>
     );

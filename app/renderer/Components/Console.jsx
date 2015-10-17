@@ -25,6 +25,20 @@ const Console = React.createClass({
       ts: React.PropTypes.number.isRequired,
       data: React.PropTypes.string.isRequired,
     })),
+    isRunning: React.PropTypes.bool.isRequired,
+  },
+
+  componentWillUpdate() {
+    const pre = React.findDOMNode(this.refs.pre);
+    const {scrollTop, scrollHeight, clientHeight} = pre;
+    this.isAtEnd = scrollTop + clientHeight >= scrollHeight;
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.isAtEnd) {
+      const pre = React.findDOMNode(this.refs.pre);
+      pre.scrollTop = pre.scrollHeight;
+    }
   },
 
   render() {
@@ -34,11 +48,11 @@ const Console = React.createClass({
       stream: true,
     });
 
-    if (!chunks) {
-      return <pre className="console" />;
-    }
-
-    return <pre className="console">{chunks.map(this.renderChunk)}</pre>;
+    return (
+      <pre className="console" ref="pre">
+        {chunks ? chunks.map(this.renderChunk) : []}
+      </pre>
+    );
   },
 
   renderChunk(chunk) {
@@ -51,7 +65,7 @@ const Console = React.createClass({
       __html = escapeHtml(data);
     }
     return (
-      <span className={type} key={type + '-' + ts} dangerouslySetInnerHTML={{__html}} />
+      <div className={type} key={type + '-' + ts} dangerouslySetInnerHTML={{__html}} />
     );
   },
 });
