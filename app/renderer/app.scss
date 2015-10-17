@@ -5,6 +5,10 @@
   background: #333;
   color: #eee;
   height: 100%;
+  * {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
   .chunk {
     display: inline;
   }
