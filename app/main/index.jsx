@@ -1,2 +1,6 @@
 import './actions';
-import './Stores/Services';
+import {setServices} from './Stores/Services';
+
+export default function setup(services) {
+  setServices(services);
+}

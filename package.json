@@ -47,7 +47,6 @@
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^0.8.2",
     "file-loader": "^0.8.4",
-    "flux-react": "^2.6.6",
     "json-loader": "^0.5.3",
     "less": "^2.5.3",
     "less-loader": "^2.2.1",

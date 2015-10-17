@@ -7,37 +7,7 @@ import flux from 'flux-react';
 import actions from '../actions';
 import actionsRpc from '../actions-rpc';
 
-const services = [{
-  cwd: '/Users/louy/Projects/um/api',
-  command: 'nodemon',
-  args: ['.'],
-  name: 'API',
-  description: 'Some sample service',
-  status: null,
-  hasNew: false,
-  commands: {
-    'Restart': 'rs',
-  },
-  output: [],
-}, {
-  cwd: '/Users/louy/Projects/um/manage',
-  command: 'nodemon',
-  args: ['.'],
-  name: 'Manage',
-  description: 'Some sample service',
-  status: null,
-  hasNew: false,
-  output: [],
-}, {
-  cwd: '/Users/louy/Projects/um/rabbit-transforms',
-  command: 'nodemon',
-  args: ['.'],
-  name: 'Rabbit Transforms',
-  description: 'Some sample service',
-  status: null,
-  hasNew: false,
-  output: [],
-}];
+const services = [];
 
 let servicesMap = {};
 
@@ -51,6 +21,14 @@ function generateMap() {
 generateMap();
 
 const children = [];
+
+let isSet = false;
+export function setServices(_services) {
+  if (isSet) throw new Error('You can only set services once');
+  isSet = true;
+  services = _services;
+  generateMap();
+}
 
 const ServicesStore = flux.createStore({
   actions: [
@@ -76,6 +54,7 @@ const ServicesStore = flux.createStore({
   },
 
   startService() {},
+
   _startService(resolve, reject, serviceName) {
     const index = servicesMap[serviceName];
     if (index == null) {
@@ -108,7 +87,7 @@ const ServicesStore = flux.createStore({
 
       child.stdout.setEncoding('utf8');
       child.stdout.on('data', function onStdout(data) {
-        const lastChunk = service.output[service.output.length-1];
+        const lastChunk = service.output[service.output.length - 1];
         if (lastChunk && lastChunk.type === 'stdout') {
           lastChunk.data += data;
           lastChunk.ts = +new Date();
@@ -119,12 +98,13 @@ const ServicesStore = flux.createStore({
             data,
           });
         }
+
         actions.loadService(serviceName); // Trigger a reload
       });
 
       child.stderr.setEncoding('utf8');
       child.stderr.on('data', function onStderr(data) {
-        const lastChunk = service.output[service.output.length-1];
+        const lastChunk = service.output[service.output.length - 1];
         if (lastChunk && lastChunk.type === 'stderr') {
           lastChunk.data += data;
           lastChunk.ts = +new Date();
@@ -135,6 +115,7 @@ const ServicesStore = flux.createStore({
             data,
           });
         }
+
         actions.loadService(serviceName); // Trigger a reload
       });
 
@@ -152,7 +133,7 @@ const ServicesStore = flux.createStore({
       });
 
       resolve();
-    } catch(e) {
+    } catch (e) {
       if (child) {
         console.error('Child ' + serviceName + ' is still running!');
       }
@@ -163,6 +144,7 @@ const ServicesStore = flux.createStore({
   },
 
   stopService() {},
+
   _stopService(resolve, reject, serviceName, signal = 'SIGTERM') {
     const index = servicesMap[serviceName];
     if (index == null) {
@@ -186,6 +168,7 @@ const ServicesStore = flux.createStore({
   },
 
   loadService() {},
+
   getService(resolve, reject, serviceName) {
     const index = servicesMap[serviceName];
     if (index === undefined) {
@@ -198,6 +181,7 @@ const ServicesStore = flux.createStore({
   },
 
   sendCommand() {},
+
   _sendCommand(resolve, reject, serviceName, command) {
     const index = servicesMap[serviceName];
     if (index == null) {

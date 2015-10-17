@@ -224,5 +224,12 @@ app.on('ready', function() {
     mainWindow.setMenu(menu);
   }
 
-  require('./app/dist/main');
+  try {
+    var main = require('./app/dist/main');
+    main(require('./services.js'));
+  } catch(e) {
+    console.error('Error while starting app');
+    console.error(e);
+  }
+
 });
