@@ -64,6 +64,9 @@ const ServicesStore = flux.createStore({
 
     actions.loadService,
     actionsRpc.getService,
+
+    actions.sendCommand,
+    actionsRpc._sendCommand,
   ],
 
   loadServices() {},
@@ -89,7 +92,11 @@ const ServicesStore = flux.createStore({
 
     const service = services[index];
 
-    console.log('starting', service);
+    service.output.push({
+      type: 'command',
+      ts: +new Date(),
+      data: service.command + ' ' + (service.args || []).join(' '),
+    });
 
     try {
       let child = spawn(service.command, service.args || [], {
@@ -131,6 +138,8 @@ const ServicesStore = flux.createStore({
         actions.loadService(serviceName); // Trigger a reload
       });
 
+      child.stdin.setEncoding('utf-8');
+
       child.on('close', function onClose(code) {
         service.output.push({
           type: 'system',
@@ -165,9 +174,12 @@ const ServicesStore = flux.createStore({
     }
 
     const child = children[index];
-    // const service = services[index];
-
-    console.log('Stopping ' + serviceName + ' with signal ', signal);
+    const service = services[index];
+    service.output.push({
+      type: 'signal',
+      ts: +new Date(),
+      data: signal,
+    });
 
     child.kill(signal);
     resolve();
@@ -183,6 +195,30 @@ const ServicesStore = flux.createStore({
     const service = services[index];
 
     resolve(service);
+  },
+
+  sendCommand() {},
+  _sendCommand(resolve, reject, serviceName, command) {
+    const index = servicesMap[serviceName];
+    if (index == null) {
+      return reject({ message: 'Service ' + serviceName + ' doesn\'t exist' });
+    }
+
+    if (!children[index]) {
+      throw reject({ message: 'Service ' + serviceName + ' is not running' });
+    }
+
+    const child = children[index];
+    const service = services[index];
+
+    child.stdin.write(command);
+    service.output.push({
+      type: 'stdin',
+      ts: +new Date(),
+      data: command,
+    });
+
+    resolve();
   },
 });
 

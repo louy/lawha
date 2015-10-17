@@ -12,6 +12,9 @@ const actions = flux.createActions([
 
   'loadService',
   'getService', // p
+
+  'sendCommand',
+  '_sendCommand', // p
 ]);
 
 export default actions;

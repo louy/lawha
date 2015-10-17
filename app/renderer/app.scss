@@ -5,10 +5,65 @@
   background: #333;
   color: #eee;
   height: 100%;
+  .chunk {
+    display: inline;
+  }
   .stderr {
     background-color: rgba(255,0,0, 0.1);
-    width: 100%;
+  }
+  .stdin {
+    background: rgb(125, 125, 0);
+    color: white;
+    &:after {
+      display: block;
+      content: "";
+    }
+  }
+  .command {
     display: block;
+    &:before {
+      content: "$ ";
+    }
+  }
+  .system {
+    &:before {
+      content: "SYSTEM: ";
+      color: yellow;
+    }
+  }
+  .signal {
+    background: red;
+    color: white;
+    font-weight: bold;
+    &:after {
+      display: block;
+      content: "";
+    }
+  }
+  label {
+    margin: 25px 0 0;
+    display: block;
+    position: relative;
+    &:before {
+      content: "$ ";
+      color: yellow;
+      display: inline;
+      position: absolute;
+      left: 0;
+    }
+  }
+  textarea, .textarea {
+    background: transparent;
+    border: 0 none;
+    color: #fff;
+    display: block;
+    width: 100%;
+    resize: none;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    outline: 0;
+    padding-left: 25px;
   }
 }
 

@@ -19,6 +19,9 @@ const ServiceStore = flux.createStore({
     actions.stopService,
     actions._startService,
     actions._stopService,
+
+    actions.sendCommand,
+    actions._sendCommand,
   ],
 
   map: {},
@@ -29,14 +32,18 @@ const ServiceStore = flux.createStore({
     } else if (id == null) {
       return Promise.resolve();
     } else if (id.substr(0, 2) === '_.') {
-      if (id.substr(2, 5) === 'start') {
-        const name = id.substr(8);
+      const parts = id.split('.');
+      if (parts[1] === 'start') {
+        const name = parts.slice(2).join('.');
         console.log('Starting ', name);
         return actionsRpc._startService(name, ...args);
-      } else if (id.substr(2, 4) === 'stop') {
-        const name = id.substr(7);
+      } else if (parts[1] === 'stop') {
+        const name = parts.slice(2).join('.');
         console.log('Stopping ', name);
         return actionsRpc._stopService(name, ...args);
+      } else if (parts[1] === 'command') {
+        const name = parts.slice(2).join('.');
+        return actionsRpc._sendCommand(name, ...args);
       }
 
       const err = new Error('Unrecognised action ' + id);
@@ -105,6 +112,11 @@ const ServiceStore = flux.createStore({
   stopService(id, signal) { this.triggerLoad('_.stop.' + id, signal); },
   _startService() {},
   _stopService() {},
+
+  sendCommand(service, command) {
+    this.triggerLoad('_.command.'+service, command);
+  },
+  _sendCommand() {},
 });
 
 export default ServiceStore;
