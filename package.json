@@ -78,5 +78,13 @@
   "directories": {
     "test": "test"
   },
-  "author": "Louy Alakkad <louy@alakkad.me> (louy.alakkad.me)"
+  "author": "Louy Alakkad <louy@alakkad.me> (louy.alakkad.me)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/louy/lawha.git"
+  },
+  "bugs": {
+    "url": "https://github.com/louy/lawha/issues"
+  },
+  "homepage": "https://github.com/louy/lawha#readme"
 }
