@@ -8,7 +8,7 @@
     "test-watch": "npm test -- --watch",
     "lint": "eslint .",
     "hot-server": "node server.js",
-    "watch": "node_modules/webpack/bin/webpack.js --config webpack.config.development.js --progress --profile --colors --watch",
+    "build-main": "node_modules/webpack/bin/webpack.js --config webpack.config.main.js --progress --profile --colors",
     "build": "node_modules/webpack/bin/webpack.js --config webpack.config.production.js --progress --profile --colors",
     "start": "electron .",
     "start-hot": "HOT=1 NODE_ENV=development electron .",
