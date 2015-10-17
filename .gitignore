@@ -35,3 +35,6 @@ release
 
 # IDE config files
 *.sublime-*
+
+# app config
+services.js
