@@ -1,6 +1,11 @@
 {
   "extends": "airbnb",
   "rules": {
+    "eqeqeq": [2, "smart"],
+    "no-eq-null": 0,
+    "id-length": [1, {
+      "exceptions": ["$", "_", "e", "i", "j"]
+    }],
     "react/sort-comp": [1, {
       "order": [
         "mixins",

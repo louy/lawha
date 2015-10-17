@@ -28,7 +28,7 @@ const services = [{
   description: 'Some sample service',
   status: null,
   hasNew: false,
-},];
+}];
 
 let servicesMap = {};
 

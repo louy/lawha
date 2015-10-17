@@ -3,14 +3,14 @@ import ipc from 'electron-safe-ipc/guest';
 import _actions from '../shared/actions';
 
 ipc.respond('fromMain', function fromMain(action, ...args) {
-  console.log('fromMain', action);
+  console.log('fromMain', action, ...args);
   if (!_actions[action]) {
     const err = new Error('Unrecognised action: ' + action);
     console.warn(err);
     return err;
   }
   return new Promise((resolve, reject) => {
-    return _actions[action](resolve, reject, ...args);
+    _actions[action](resolve, reject, ...args);
   });
 });
 
@@ -18,7 +18,6 @@ const actions = {};
 
 Object.keys(_actions).forEach(action => {
   actions[action] = (...args) => {
-    console.log('sending', action, ...args);
     _actions[action](action, ...args);
     return ipc.request('fromRenderer', action, ...args);
   };

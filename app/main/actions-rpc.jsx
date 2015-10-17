@@ -10,7 +10,7 @@ ipc.respond('fromRenderer', function fromRenderer(action, ...args) {
     return err;
   }
   return new Promise((resolve, reject) => {
-    return _actions[action](resolve, reject, ...args);
+    _actions[action](resolve, reject, ...args);
   });
 });
 
@@ -18,7 +18,6 @@ const actions = {};
 
 Object.keys(_actions).forEach(action => {
   actions[action] = (...args) => {
-    console.log('sending', action, ...args);
     _actions[action](action, ...args);
     return ipc.request('fromMain', action, ...args);
   };

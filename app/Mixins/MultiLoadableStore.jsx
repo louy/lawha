@@ -97,7 +97,7 @@ export default {
 
     this.requests[id] = this.getRequest(id).then(function done(data) {
       _this.data(id, data);
-      _this.done && _this.done.apply(_this, [id].concat(arguments));
+      _this.done && _this.done(id, data);
       _this.emit(id + '.data');
     }, function fail(err) {
       _this.isError(id, true);
@@ -108,10 +108,10 @@ export default {
         _this.errorMessage(id, 'Unknown error');
       }
 
-      _this.fail && _this.fail.apply(_this, [id].concat(arguments));
+      _this.fail && _this.fail(id, err);
     }).then(function always() {
       _this.isLoading(id, false);
-      _this.always && _this.always.apply(_this, [id].concat(arguments));
+      _this.always && _this.always(id);
       _this.emit(id + '.meta');
     });
 

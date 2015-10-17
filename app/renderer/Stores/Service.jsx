@@ -9,6 +9,9 @@ const ServiceStore = flux.createStore({
   mixins: [MultiLoadableStore],
 
   actions: [
+    actions.getServices,
+    actions.loadServices,
+
     actions.loadService,
     actions.getService,
   ],
@@ -18,6 +21,8 @@ const ServiceStore = flux.createStore({
   getRequest(id) {
     if (id === '_') {
       return actionsRpc.getServices();
+    } else if (id == null) {
+      return Promise.resolve();
     }
 
     return actionsRpc.getService(id);
@@ -30,7 +35,7 @@ const ServiceStore = flux.createStore({
         map[service.name] = index;
       });
       this.map = map;
-    } else {
+    } else if (id != null) {
       const {map} = this;
       const index = map[data.name];
       const _ = this.data('_') || [];

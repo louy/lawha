@@ -7,10 +7,10 @@ import Sidebar from './Sidebar';
 import Body from './Body';
 
 import ListensToStore from '../../Mixins/ListensToStore';
-import ServiceStore from '../Stores/Services';
+import ServiceStore from '../Stores/Service';
 
 const App = React.createClass({
-  mixins: [new ListensToStore('ServiceStore', ServiceStore, 'data')],
+  mixins: [new ListensToStore('ServiceStore', ServiceStore, '_.*')],
 
   getStateForServiceStore() {
     return {
