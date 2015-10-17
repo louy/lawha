@@ -45,7 +45,7 @@ const Sidebar = React.createClass({
       return true;
     }
 
-    return search.every(word => item.title.toLowerCase().indexOf(word) > -1);
+    return search.every(word => (item.title.toLowerCase().indexOf(word) > -1) || (item.subtitle.toLowerCase().indexOf(word) > -1));
   },
 
   onMouseEnter(e) {
@@ -68,7 +68,7 @@ const Sidebar = React.createClass({
   render() {
     const search = this.state.search.toLowerCase().split(' ');
     return (
-      <div className="pane pane-sm sidebar">
+      <div className="pane pane-one-fourth sidebar">
         <ul className="list-group">
           <li className="list-group-header">
             <input className="form-control" type="text" placeholder="Search for someone" valueLink={this.linkState('search')} />
