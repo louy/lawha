@@ -7,7 +7,7 @@
  */
 export default {
   /*
-    You should override this method. It should return a jquery ajax request object (jqxhr).
+    You should override this method. It should return a Promise.
   */
 
   // getRequest() {},
@@ -17,7 +17,7 @@ export default {
   */
 
   // done(data) {},
-  // fail(jqxhr) {},
+  // fail(err) {},
   // always() {},
 
   /*
@@ -27,7 +27,7 @@ export default {
   isLoading: false,
   isError: false,
   errorMessage: null,
-  data: null,
+  // data: null,
 
   triggerLoad() {
     if (this.isLoading) return false;
@@ -41,23 +41,21 @@ export default {
 
     const _this = this;
 
-    this.request = this.getRequest().done(function done(data) {
+    this.request = this.getRequest().then(function success(data) {
       _this.data = data;
       _this.done && _this.done.apply(_this, arguments);
       _this.emit('data');
-    }).fail(function fail(jqxhr) {
+    }, function fail(err) {
       _this.isError = true;
 
-      if (jqxhr.responseJSON) {
-        _this.errorMessage = jqxhr.responseJSON.message;
-      } else if (!jqxhr.status) {
-        _this.errorMessage = 'Error connecting to the server.';
+      if (err && err.message) {
+        _this.errorMessage = err.message;
       } else {
-        _this.errorMessage = jqxhr.statusText + ' (' + jqxhr.status + ')';
+        _this.errorMessage = 'Unknown error';
       }
 
       _this.fail && _this.fail.apply(_this, arguments);
-    }).always(function always() {
+    }).then(function always() {
       _this.isLoading = false;
       _this.always && _this.always.apply(_this, arguments);
       _this.emit('meta');

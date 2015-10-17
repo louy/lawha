@@ -1,8 +1,8 @@
 import flux from 'flux-react';
 
 const actions = flux.createActions([
-  'setServices',
   'loadServices',
+  'getServices',
 
   'loadServiceDetails',
   'setServiceDetails',

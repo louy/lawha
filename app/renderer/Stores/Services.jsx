@@ -1,34 +1,37 @@
 import flux from 'flux-react';
 
 import actions from '../actions';
+import actionsRpc from '../actions-rpc';
+
+import LoadableStore from '../../Mixins/LoadableStore';
 
 const ServicesStore = flux.createStore({
-  services: [],
+  mixins: [LoadableStore],
+
+  data: [],
   servicesMap: {},
 
   actions: [
+    actions.getServices,
     actions.loadServices,
-    actions.setServices,
   ],
 
-  loadServices() {},
+  getServices() {},
 
-  setServices(services) {
-    this.services = services;
+  loadServices() {
+    this.triggerLoad();
+  },
 
+  getRequest() {
+    return actionsRpc.getServices();
+  },
+
+  done(services) {
     const servicesMap = {};
     services.forEach((service, index) => {
       servicesMap[service.path] = index;
     });
     this.servicesMap = servicesMap;
-
-    this.emit('services');
-  },
-
-  exports: {
-    getServices() {
-      return this.services;
-    },
   },
 });
 

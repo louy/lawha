@@ -1,6 +1,6 @@
 import React from 'react';
 import './app.css';
-import './css/photon.css';
+import './css/photon.scss';
 import './actions';
 
 import App from './Components/App';

@@ -1,15 +1,17 @@
 import flux from 'flux-react';
 
 import actions from '../actions';
+import actionsRpc from '../actions-rpc';
 
 const ServicesStore = flux.createStore({
   actions: [
     actions.loadServices,
-    actions.setServices,
+    actionsRpc.getServices,
   ],
 
-  loadServices() {
-    actions.setServices([{
+  loadServices() {},
+  getServices(resolve, reject) {
+    resolve([{
       path: 'test-1',
       name: 'Test 1',
       description: 'Some sample service',
@@ -29,8 +31,6 @@ const ServicesStore = flux.createStore({
       hasNew: false,
     }]);
   },
-
-  setServices() {},
 });
 
 export default ServicesStore;

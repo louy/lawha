@@ -10,11 +10,11 @@ import ListensToStore from '../../Mixins/ListensToStore';
 import ServicesStore from '../Stores/Services';
 
 const App = React.createClass({
-  mixins: [new ListensToStore('ServicesStore', ServicesStore, 'services,services.*')],
+  mixins: [new ListensToStore('ServicesStore', ServicesStore, 'data')],
 
   getStateForServicesStore() {
     return {
-      services: ServicesStore.getServices(),
+      services: ServicesStore.getData() || [],
       selectedId: null,
     };
   },
@@ -22,6 +22,12 @@ const App = React.createClass({
   componentWillMount() {
     actions.loadServices();
   },
+
+  // componentWillUpdate(nextProps, nextState) {
+  //   if (nextState.selectedId !== this.state.selectedId) {
+  //     actions.loadServiceDetails(nextState.selectedId);
+  //   }
+  // },
 
   render() {
     const items = this.state.services.map((service) => {
