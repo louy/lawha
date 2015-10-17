@@ -1,6 +1,7 @@
 /* eslint no-path-concat: 0, func-names:0 */
 var app = require('app');
 var fs = require('fs');
+var path = require('path');
 var BrowserWindow = require('browser-window');
 var Menu = require('menu');
 var menu;
@@ -39,9 +40,9 @@ app.on('ready', function() {
 
   if (process.platform === 'darwin') {
     template = [{
-      label: 'Electron',
+      label: 'Lawha',
       submenu: [{
-        label: 'About ElectronReact',
+        label: 'About Lawha',
         selector: 'orderFrontStandardAboutPanel:',
       }, {
         type: 'separator',
@@ -51,7 +52,7 @@ app.on('ready', function() {
       }, {
         type: 'separator',
       }, {
-        label: 'Hide ElectronReact',
+        label: 'Hide Lawha',
         accelerator: 'Command+H',
         selector: 'hide:',
       }, {
@@ -227,7 +228,7 @@ app.on('ready', function() {
 
   try {
     var main = require('./app/dist/main');
-    var stat = fs.statSync('./services.js');
+    var stat = fs.statSync(path.join(__dirname, 'services.js'));
     if (stat && stat.isFile()) {
       main(require('./services.js'));
     } else {
