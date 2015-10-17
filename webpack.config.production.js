@@ -28,6 +28,20 @@ config.module.loaders.push({
     'css-loader'
   )
 }, {
+  test: /\.less$/,
+  loaders: [
+    'style-loader',
+    'css-loader',
+    'less-loader',
+  ]
+}, {
+  test: /\.s[ac]ss$/,
+  loaders: [
+    'style-loader',
+    'css-loader',
+    'sass-loader',
+  ]
+}, {
   test: /\.module\.css$/,
   loader: stylesTextPlugin.extract(
     'style-loader',
