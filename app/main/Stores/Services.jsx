@@ -23,10 +23,17 @@ const children = [];
 
 let isSet = false;
 export function setServices(_services) {
+  const autoStart = [];
+
   if (isSet) throw new Error('You can only set services once');
   isSet = true;
   services = Object.keys(_services).map((key) => {
     const service = _services[key];
+
+    if (service.autoStart) {
+      autoStart.push(key);
+    }
+
     service.id = key;
     service.output = [];
     service.status = null;
@@ -35,6 +42,8 @@ export function setServices(_services) {
   });
 
   generateMap();
+
+  autoStart.forEach((key) => new Promise(function autostartService(resolve, reject) { actions._startService(resolve, reject, key); }));
 }
 
 const ServicesStore = flux.createStore({
