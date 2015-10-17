@@ -13,7 +13,7 @@ let servicesMap = {};
 function generateMap() {
   servicesMap = {};
   services.forEach((service, index) => {
-    servicesMap[service.name] = index;
+    servicesMap[service.id] = index;
   });
 }
 
@@ -62,16 +62,16 @@ const ServicesStore = flux.createStore({
 
   startService() {},
 
-  _startService(resolve, reject, serviceName) {
-    const index = servicesMap[serviceName];
+  _startService(resolve, reject, serviceId) {
+    const index = servicesMap[serviceId];
     if (index == null) {
-      const err = new Error('Service ' + serviceName + ' doesn\'t exist');
+      const err = new Error('Service ' + serviceId + ' doesn\'t exist');
       console.warn(err);
       return reject(err);
     }
 
     if (children[index]) {
-      const err = new Error('Service ' + serviceName + ' is already running');
+      const err = new Error('Service ' + serviceId + ' is already running');
       console.warn(err);
       throw reject(err);
     }
@@ -112,7 +112,7 @@ const ServicesStore = flux.createStore({
           });
         }
 
-        actions.loadService(serviceName); // Trigger a reload
+        actions.loadService(serviceId); // Trigger a reload
       });
 
       child.stderr.setEncoding('utf8');
@@ -129,7 +129,7 @@ const ServicesStore = flux.createStore({
           });
         }
 
-        actions.loadService(serviceName); // Trigger a reload
+        actions.loadService(serviceId); // Trigger a reload
       });
 
       child.stdin.setEncoding('utf-8');
@@ -144,13 +144,13 @@ const ServicesStore = flux.createStore({
         children[index] = null;
         child = null;
 
-        actions.loadService(serviceName); // Trigger a reload
+        actions.loadService(serviceId); // Trigger a reload
       });
 
       resolve();
     } catch (e) {
       if (child) {
-        console.error('Child ' + serviceName + ' is still running!');
+        console.error('Child ' + serviceId + ' is still running!');
       }
 
       console.error(require('util').inspect(e));
@@ -160,14 +160,14 @@ const ServicesStore = flux.createStore({
 
   stopService() {},
 
-  _stopService(resolve, reject, serviceName, signal = 'SIGTERM') {
-    const index = servicesMap[serviceName];
+  _stopService(resolve, reject, serviceId, signal = 'SIGTERM') {
+    const index = servicesMap[serviceId];
     if (index == null) {
-      return reject({ message: 'Service ' + serviceName + ' doesn\'t exist' });
+      return reject({ message: 'Service ' + serviceId + ' doesn\'t exist' });
     }
 
     if (!children[index]) {
-      throw reject({ message: 'Service ' + serviceName + ' is not running' });
+      throw reject({ message: 'Service ' + serviceId + ' is not running' });
     }
 
     const child = children[index];
@@ -184,10 +184,10 @@ const ServicesStore = flux.createStore({
 
   loadService() {},
 
-  getService(resolve, reject, serviceName) {
-    const index = servicesMap[serviceName];
+  getService(resolve, reject, serviceId) {
+    const index = servicesMap[serviceId];
     if (index === undefined) {
-      return reject({ message: 'Service ' + serviceName + ' doesn\'t exist' });
+      return reject({ message: 'Service ' + serviceId + ' doesn\'t exist' });
     }
 
     const service = services[index];
@@ -197,14 +197,14 @@ const ServicesStore = flux.createStore({
 
   sendCommand() {},
 
-  _sendCommand(resolve, reject, serviceName, command) {
-    const index = servicesMap[serviceName];
+  _sendCommand(resolve, reject, serviceId, command) {
+    const index = servicesMap[serviceId];
     if (index == null) {
-      return reject({ message: 'Service ' + serviceName + ' doesn\'t exist' });
+      return reject({ message: 'Service ' + serviceId + ' doesn\'t exist' });
     }
 
     if (!children[index]) {
-      throw reject({ message: 'Service ' + serviceName + ' is not running' });
+      throw reject({ message: 'Service ' + serviceId + ' is not running' });
     }
 
     const child = children[index];

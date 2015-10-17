@@ -43,10 +43,10 @@ const App = React.createClass({
       }
 
       return {
-        id: service.name,
+        id: service.id,
         title: service.name,
         subtitle: service.description,
-        icon: service.status,
+        icon: service.status == null || service.status === true ? '' : (service.status + ''),
         iconBackground,
       };
     });

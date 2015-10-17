@@ -59,7 +59,7 @@ const ServiceStore = flux.createStore({
     if (id === '_') {
       const map = {};
       data.forEach((service, index) => {
-        map[service.name] = index;
+        map[service.id] = index;
       });
       this.map = map;
     } else if (id != null) {
@@ -71,11 +71,11 @@ const ServiceStore = flux.createStore({
       }
 
       const {map} = this;
-      const index = map[data.name];
+      const index = map[data.id];
       const _ = this.data('_') || [];
       if (index == null) {
         console.log('New service!');
-        map[data.name] = _.length;
+        map[data.id] = _.length;
         _.push(data);
       } else {
         _[index] = data;
