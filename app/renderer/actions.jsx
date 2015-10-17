@@ -15,9 +15,10 @@ const actions = {};
 
 Object.keys(_actions).forEach(action => {
   actions[action] = (...args) => {
+    console.log('args', args);
     console.log('sending', action, ...args);
     ipc.send('fromRenderer', action, ...args);
-    _actions[action](action, ...args);
+    _actions[action](...args);
   };
   actions[action].on = (event, func) => {
     _actions[action].on(event, func);

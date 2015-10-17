@@ -7,14 +7,14 @@ import Sidebar from './Sidebar';
 import Body from './Body';
 
 import ListensToStore from '../../Mixins/ListensToStore';
-import ServicesStore from '../Stores/Services';
+import ServiceStore from '../Stores/Services';
 
 const App = React.createClass({
-  mixins: [new ListensToStore('ServicesStore', ServicesStore, 'data')],
+  mixins: [new ListensToStore('ServiceStore', ServiceStore, 'data')],
 
-  getStateForServicesStore() {
+  getStateForServiceStore() {
     return {
-      services: ServicesStore.getData() || [],
+      services: ServiceStore.getData('_') || [],
       selectedId: null,
     };
   },
@@ -23,19 +23,26 @@ const App = React.createClass({
     actions.loadServices();
   },
 
-  // componentWillUpdate(nextProps, nextState) {
-  //   if (nextState.selectedId !== this.state.selectedId) {
-  //     actions.loadServiceDetails(nextState.selectedId);
-  //   }
-  // },
-
   render() {
     const items = this.state.services.map((service) => {
+      let iconBackground;
+      switch (service.status) {
+      case null:
+        iconBackground = 'gray';
+        break;
+      case true:
+        iconBackground = 'green';
+        break;
+      default:
+        iconBackground = 'red';
+      }
+
       return {
-        id: service.path,
+        id: service.name,
         title: service.name,
         subtitle: service.description,
         icon: service.status,
+        iconBackground,
       };
     });
 
@@ -48,7 +55,7 @@ const App = React.createClass({
         <div className="window-content">
           <div className="pane-group">
             <Sidebar items={items} onChange={(item) => {this.setState({ selectedId: item.id });}} selectedId={selectedId} />
-            <Body />
+            <Body service={selectedId} />
           </div>
         </div>
       </div>

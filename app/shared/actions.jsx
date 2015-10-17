@@ -6,6 +6,12 @@ const actions = flux.createActions([
 
   'loadServiceDetails',
   'setServiceDetails',
+
+  'startService',
+  'stopService',
+
+  'loadService',
+  'getService',
 ]);
 
 export default actions;

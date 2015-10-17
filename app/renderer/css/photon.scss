@@ -682,6 +682,43 @@ textarea {
   width: 33.3%;
 }
 
+.aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &--horizontal {
+    flex-direction: row;
+  }
+  &-item {
+    text-align: center;
+    &--start {
+      align-self: flex-start;
+    }
+    &--end {
+      align-self: flex-end;
+    }
+    &--grow-1 {
+      flex-grow: 1;
+    }
+    &--grow-2 {
+      flex-grow: 2;
+    }
+    &--grow-3 {
+      flex-grow: 3;
+    }
+    &--grow-4 {
+      flex-grow: 4;
+    }
+    &--grow-5 {
+      flex-grow: 5;
+    }
+  }
+}
+
+.body-actions {
+  text-align: right;
+}
+
 img {
   -webkit-user-drag: text;
 }

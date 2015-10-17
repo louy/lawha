@@ -3,7 +3,7 @@ import ipc from 'electron-safe-ipc/host';
 import _actions from '../shared/actions';
 
 ipc.respond('fromRenderer', function fromRenderer(action, ...args) {
-  console.log('fromRenderer', action);
+  console.log('fromRenderer', action, ...args);
   if (!_actions[action]) {
     const err = new Error('Unrecognised action: ' + action);
     console.warn(err);
