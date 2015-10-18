@@ -1,4 +1,5 @@
 # Lawha
+[![CircleCI](https://img.shields.io/circleci/project/louy/lawha.svg)](https://circleci.com/gh/louy/lawha)
 
 Micro-services developer's swiss army knife.
 
