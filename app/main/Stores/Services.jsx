@@ -4,6 +4,7 @@ import {spawn} from 'child_process';
 import flux from 'flux-react';
 
 import actions from '../actions';
+import actionsRemote from '../actions-remote';
 import actionsRpc from '../actions-rpc';
 
 let services = [];
@@ -81,30 +82,19 @@ let shouldExit = false;
 
 const ServicesStore = flux.createStore({
   actions: [
-    actions.loadServices,
     actionsRpc.getServices,
 
-    actions.startService,
-    actions.stopService,
     actionsRpc._startService,
     actionsRpc._stopService,
 
-    actions.loadService,
     actionsRpc.getService,
 
-    actions.sendCommand,
     actionsRpc._sendCommand,
-
-    actions.setServiceReadLines,
   ],
-
-  loadServices() {},
 
   getServices(resolve) {
     resolve(services);
   },
-
-  startService() {},
 
   _startService(resolve, reject, serviceId) {
     const index = servicesMap[serviceId];
@@ -162,7 +152,7 @@ const ServicesStore = flux.createStore({
           });
         }
 
-        actions.loadService(serviceId); // Trigger a reload
+        actionsRemote.loadService(serviceId); // Trigger a reload
       });
 
       child.stderr.setEncoding('utf8');
@@ -183,7 +173,7 @@ const ServicesStore = flux.createStore({
         }
 
         service.lastChanged = +new Date();
-        actions.loadService(serviceId); // Trigger a reload
+        actionsRemote.loadService(serviceId); // Trigger a reload
       });
 
       child.stdin.setEncoding('utf-8');
@@ -200,7 +190,7 @@ const ServicesStore = flux.createStore({
         child = null;
         ++ service.numberOfLines;
 
-        actions.loadService(serviceId); // Trigger a reload
+        actionsRemote.loadService(serviceId); // Trigger a reload
 
         if (shouldExit && !children.filter(i => !!i).length) {
           console.log('last child has exited');
@@ -218,8 +208,6 @@ const ServicesStore = flux.createStore({
       reject(e);
     }
   },
-
-  stopService() {},
 
   _stopService(resolve, reject, serviceId, signal = 'SIGTERM') {
     const index = servicesMap[serviceId];
@@ -244,8 +232,6 @@ const ServicesStore = flux.createStore({
     resolve();
   },
 
-  loadService() {},
-
   getService(resolve, reject, serviceId) {
     const index = servicesMap[serviceId];
     if (index === undefined) {
@@ -256,8 +242,6 @@ const ServicesStore = flux.createStore({
 
     resolve(service);
   },
-
-  sendCommand() {},
 
   _sendCommand(resolve, reject, serviceId, command) {
     const index = servicesMap[serviceId];
@@ -282,8 +266,6 @@ const ServicesStore = flux.createStore({
 
     resolve();
   },
-
-  setServiceReadLines() {},
 });
 
 export default ServicesStore;

@@ -18,7 +18,6 @@ const actions = {};
 
 Object.keys(_actions).forEach(action => {
   actions[action] = (...args) => {
-    _actions[action](action, ...args);
     return ipc.request('fromRenderer', action, ...args);
   };
   actions[action].on = (event, func) => {

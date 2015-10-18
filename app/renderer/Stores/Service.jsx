@@ -1,6 +1,7 @@
 import flux from 'flux-react';
 
 import actions from '../actions';
+import actionsRemote from '../actions-remote';
 import actionsRpc from '../actions-rpc';
 
 import MultiLoadableStore from '../../Mixins/MultiLoadableStore';
@@ -9,19 +10,14 @@ const ServiceStore = flux.createStore({
   mixins: [MultiLoadableStore],
 
   actions: [
-    actions.getServices,
-    actions.loadServices,
+    actionsRemote.loadServices,
 
-    actions.loadService,
-    actions.getService,
+    actionsRemote.loadService,
 
     actions.startService,
     actions.stopService,
-    actions._startService,
-    actions._stopService,
 
     actions.sendCommand,
-    actions._sendCommand,
 
     actions.setServiceReadLines,
   ],
@@ -99,13 +95,9 @@ const ServiceStore = flux.createStore({
     }
   },
 
-  getServices() {},
-
   loadServices() {
     this.triggerLoad('_');
   },
-
-  getService() {},
 
   loadService(id) {
     this.triggerLoad(id);
@@ -113,13 +105,10 @@ const ServiceStore = flux.createStore({
 
   startService(id) { this.triggerLoad('_.start.' + id); },
   stopService(id, signal) { this.triggerLoad('_.stop.' + id, signal); },
-  _startService() {},
-  _stopService() {},
 
   sendCommand(service, command) {
     this.triggerLoad('_.command.'+service, command);
   },
-  _sendCommand() {},
 
   setServiceReadLines(id, lines) {
     if (this.lines[id] === lines) return;
