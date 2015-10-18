@@ -7,6 +7,8 @@ import actions from '../actions';
 import actionsRemote from '../actions-remote';
 import actionsRpc from '../actions-rpc';
 
+import {bounce, cancelBounce} from '../dock';
+
 let services = [];
 
 let servicesMap = {};
@@ -119,6 +121,10 @@ const ServicesStore = flux.createStore({
     });
     ++ service.numberOfLines;
 
+    if (service.bounceId) {
+      cancelBounce(service.bounceId);
+    }
+
     try {
       let child = spawn(service.command, service.args || [], {
         cwd: service.cwd,
@@ -196,6 +202,8 @@ const ServicesStore = flux.createStore({
           console.log('last child has exited');
           process.exit(code || 0);
         }
+
+        service.bounceId = bounce(code > 0);
       });
 
       resolve();

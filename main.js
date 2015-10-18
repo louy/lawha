@@ -229,23 +229,23 @@ function openMainWindow() {
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
   }
+}
+
+app.on('ready', function() {
+  openMainWindow();
 
   try {
     var main = require('./app/dist/main');
     var stat = fs.statSync(path.join(__dirname, 'services.js'));
     if (stat && stat.isFile()) {
-      main(require('./services.js'));
+      main.setup(require('./services.js'), app);
     } else {
-      main(require('./services.sample.js'));
+      main.setup(require('./services.sample.js'), app);
     }
   } catch (e) {
     console.error('Error while starting app');
     console.error(e);
   }
-}
-
-app.on('ready', function() {
-  openMainWindow();
 });
 
 app.on('activate', function() {
