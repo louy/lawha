@@ -4,7 +4,13 @@
   overflow: scroll;
   background: #333;
   color: #eee;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 100%;
+
   * {
     -webkit-user-select: auto;
     user-select: auto;
@@ -131,12 +137,11 @@
 }
 .body-actions {
   text-align: right;
-  padding-right: 25px;
+  padding: 25px;
   .btn {
     margin: 5px 0 5px 10px;
   }
 }
-
 
 .large-message {
   position: absolute;

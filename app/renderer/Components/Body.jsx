@@ -63,8 +63,8 @@ const Body = React.createClass({
     }
 
     return (
-      <div className="pane pane--scroll">
-        <div className="pane-title">
+      <div className="pane aligner aligner--vertical">
+        <div className="aligner-item">
           {data ? (
           <div className="aligner aligner--horizontal aligner--center body-title">
             <div className="aligner-item aligner-item--grow-3">
@@ -85,7 +85,7 @@ const Body = React.createClass({
           </div>
           ) : null}
         </div>
-        <div className="pane-content">
+        <div className="aligner-item aligner-item--grow-1" style={{position: 'relative'}}>
           {isError ? (
             <div className="large-message">
               <p>An error has occurred.</p>
