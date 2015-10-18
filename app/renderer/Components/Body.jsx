@@ -79,7 +79,7 @@ const Body = React.createClass({
             ) : null}
             </div>
 
-            <div className="aligner-item aligner-item--grow-1 body-actions">
+            <div className="aligner-item aligner-item--grow-5 body-actions">
               <ServiceActions service={data.id} actions={data.actions} status={data.status} />
             </div>
           </div>

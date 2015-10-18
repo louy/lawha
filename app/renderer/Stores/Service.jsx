@@ -20,6 +20,8 @@ const ServiceStore = flux.createStore({
     actions.sendCommand,
 
     actions.setServiceReadLines,
+
+    actions.sendExec,
   ],
 
   map: {},
@@ -114,6 +116,10 @@ const ServiceStore = flux.createStore({
     if (this.lines[id] === lines) return;
     this.lines[id] = lines;
     this.emit('_.lines');
+  },
+
+  sendExec(id, command) {
+    actionsRpc.runExec(command);
   },
 
   exports: {

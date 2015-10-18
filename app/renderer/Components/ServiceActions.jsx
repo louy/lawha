@@ -57,6 +57,9 @@ const ServiceActions = React.createClass({
     if (action.stdin) {
       actions.sendCommand(this.props.service, action.stdin);
     }
+    if (action.exec) {
+      actions.sendExec(this.props.service, action.exec);
+    }
   },
 
   render() {
@@ -68,18 +71,21 @@ const ServiceActions = React.createClass({
       <div>
         {actions.map(this.renderAction)}
         {this.props.status === true ? (
-          <button className="btn btn-large btn-negative" onClick={this.stopService}>Stop</button>
+          <button className="btn btn-negative" onClick={this.stopService}>Stop</button>
         ) : (
-          <button className="btn btn-large btn-primary" onClick={this.startService}>Start</button>
+          <button className="btn btn-primary" onClick={this.startService}>Start</button>
         )}
       </div>
     );
   },
 
   renderAction(action) {
-    if (this.props.status !== true) return null;
+    if (this.props.status !== true &&
+        action.stdin) {
+      return null;
+    }
 
-    const className = 'btn btn-large btn-' + (action.theme || 'default');
+    const className = 'btn btn-' + (action.theme || 'default');
 
     return <button className={className} key={action.name} onClick={() => {
       this.onClick(action);
