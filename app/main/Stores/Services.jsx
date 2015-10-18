@@ -55,6 +55,30 @@ process.on('exit', function() {
   });
 });
 
+let shouldExit = false;
+[
+  'SIGTERM',
+  'SIGINT',
+  'SIGKILL',
+].forEach((signal) => {
+  process.on(signal, function () {
+    console.log(signal);
+    children.forEach((child) => {
+      if (child) {
+        child.kill(signal);
+      }
+    });
+
+    if (!children.filter(i => !!i).length) {
+      console.log('No one is running');
+      process.exit(0);
+    }
+
+    shouldExit = true;
+    console.log('not exiting');
+  });
+});
+
 const ServicesStore = flux.createStore({
   actions: [
     actions.loadServices,
@@ -176,8 +200,12 @@ const ServicesStore = flux.createStore({
         child = null;
         ++ service.numberOfLines;
 
-
         actions.loadService(serviceId); // Trigger a reload
+
+        if (shouldExit && !children.filter(i => !!i).length) {
+          console.log('last child has exited');
+          process.exit(code || 0);
+        }
       });
 
       resolve();
