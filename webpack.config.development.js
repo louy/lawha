@@ -1,5 +1,6 @@
-/* eslint strict: 0 */
+/* eslint strict: 0, vars-on-top: 0 */
 'use strict';
+
 process.env.NODE_ENV = 'development';
 
 var webpack = require('webpack');

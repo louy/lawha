@@ -1,3 +1,6 @@
+/* eslint strict: 0, vars-on-top: 0, no-console: 0 */
+'use strict';
+
 var path = require('path');
 var express = require('express');
 var webpack = require('webpack');
@@ -15,11 +18,11 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-app.get('*', function(req, res) {
+app.get('*', function get(req, res) {
   res.sendFile(path.join(__dirname, 'app/renderer', 'hot-dev-app.html'));
 });
 
-app.listen(6060, 'localhost', function(err) {
+app.listen(6060, 'localhost', function listening(err) {
   if (err) {
     console.log(err);
     return;

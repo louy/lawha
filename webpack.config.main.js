@@ -1,14 +1,17 @@
+/* eslint strict: 0, vars-on-top: 0 */
+'use strict';
+
 var path = require('path');
 var fs = require('fs');
 var webpack = require('webpack');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
-  .filter(function(x) {
-    return ['.bin'].indexOf(x) === -1;
+  .filter(function filterModule(mod) {
+    return ['.bin'].indexOf(mod) === -1;
   })
   .concat(['browser-window', 'remote', 'ipc', 'protocol'])
-  .forEach(function(mod) {
+  .forEach(function foreachModule(mod) {
     nodeModules[mod] = 'commonjs ' + mod;
   });
 
@@ -26,7 +29,7 @@ module.exports = {
       // json
       test: /\.json$/,
       loaders: ['json-loader'],
-    },],
+    }],
   },
   output: {
     path: path.join(__dirname, 'app/dist'),

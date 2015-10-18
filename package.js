@@ -1,4 +1,6 @@
-/* eslint no-shadow: 0, func-names: 0, no-unused-vars: 0, no-console: 0 */
+/* eslint strict: 0, vars-on-top: 0, no-shadow: 0, func-names: 0, no-unused-vars: 0, no-console: 0 */
+'use strict';
+
 var os = require('os');
 var webpack = require('webpack');
 var mainCfg = require('./webpack.config.main.js');
@@ -10,11 +12,9 @@ var exec = require('child_process').exec;
 var argv = require('minimist')(process.argv.slice(2));
 var devDeps = Object.keys(require('./package.json').devDependencies);
 
-
 var appName = argv.name || argv.n || 'Lawha';
 var shouldUseAsar = argv.asar || argv.a || false;
 var shouldBuildAll = argv.all || false;
-
 
 var DEFAULT_OPTS = {
   dir: './',
@@ -23,41 +23,29 @@ var DEFAULT_OPTS = {
   ignore: [
     '/test($|/)',
     '/tools($|/)',
-    '/release($|/)'
-  ].concat(devDeps.map(function(name) { return '/node_modules/' + name + '($|/)'; }))
+    '/release($|/)',
+  ].concat(devDeps.map(function(name) { return '/node_modules/' + name + '($|/)'; })),
 };
 
-var icon = argv.icon || argv.i || 'app/app.icns';
-
-if (icon) {
-  DEFAULT_OPTS.icon = icon;
-}
-
-var version = argv.version || argv.v;
-
-if (version) {
-  DEFAULT_OPTS.version = version;
-  startMainPack();
-} else {
-  // use the same version as the currently-installed electron-prebuilt
-  exec('npm list | grep electron-prebuilt', function(err, stdout, stderr) {
-    if (err) {
-      DEFAULT_OPTS.version = '0.28.3';
-    } else {
-      DEFAULT_OPTS.version = stdout.split('@')[1].replace(/\s/g, '');
-    }
-    startMainPack();
-  });
-}
-
-function startMainPack() {
-  console.log('start main pack...');
-  webpack(mainCfg, function runWebpackMainBuild(err, stats) {
+function log(plat, arch) {
+  return function(err, filepath) {
     if (err) return console.error(err);
-    startPack();
-  });
+    console.log(plat + '-' + arch + ' finished!');
+  };
 }
 
+function pack(plat, arch, cb) {
+  // there is no darwin ia32 electron
+  if (plat === 'darwin' && arch === 'ia32') return;
+
+  var opts = assign({}, DEFAULT_OPTS, {
+    platform: plat,
+    arch: arch,
+    out: 'release/' + plat + '-' + arch,
+  });
+
+  packager(opts, cb);
+}
 
 function startPack() {
   console.log('start renderer pack...');
@@ -86,23 +74,34 @@ function startPack() {
   });
 }
 
-function pack(plat, arch, cb) {
-  // there is no darwin ia32 electron
-  if (plat === 'darwin' && arch === 'ia32') return;
-
-  var opts = assign({}, DEFAULT_OPTS, {
-    platform: plat,
-    arch: arch,
-    out: 'release/' + plat + '-' + arch
+function startMainPack() {
+  console.log('start main pack...');
+  webpack(mainCfg, function runWebpackMainBuild(err, stats) {
+    if (err) return console.error(err);
+    startPack();
   });
-
-  packager(opts, cb);
 }
 
+var icon = argv.icon || argv.i || 'app/app.icns';
 
-function log(plat, arch) {
-  return function(err, filepath) {
-    if (err) return console.error(err);
-    console.log(plat + '-' + arch + ' finished!');
-  };
+if (icon) {
+  DEFAULT_OPTS.icon = icon;
+}
+
+var version = argv.version || argv.v;
+
+if (version) {
+  DEFAULT_OPTS.version = version;
+  startMainPack();
+} else {
+  // use the same version as the currently-installed electron-prebuilt
+  exec('npm list | grep electron-prebuilt', function(err, stdout, stderr) {
+    if (err) {
+      DEFAULT_OPTS.version = '0.28.3';
+    } else {
+      DEFAULT_OPTS.version = stdout.split('@')[1].replace(/\s/g, '');
+    }
+
+    startMainPack();
+  });
 }

@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb",
+  "root": true,
+  "rules": {
+    "eqeqeq": [2, "smart"],
+    "no-eq-null": 0,
+    "id-length": [1, {
+      "exceptions": ["$", "_", "e", "i", "j"]
+    }],
+    "no-var": 0
+  }
+}

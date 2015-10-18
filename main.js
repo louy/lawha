@@ -1,4 +1,6 @@
-/* eslint no-path-concat: 0, func-names:0 */
+/* eslint strict: 0, vars-on-top: 0, no-console: 0, func-names: 0 */
+'use strict';
+
 var app = require('app');
 var fs = require('fs');
 var path = require('path');
@@ -70,7 +72,7 @@ app.on('ready', function() {
         click: function() {
           app.quit();
         },
-      },],
+      }],
     }, {
       label: 'Edit',
       submenu: [{
@@ -99,7 +101,7 @@ app.on('ready', function() {
         label: 'Select All',
         accelerator: 'Command+A',
         selector: 'selectAll:',
-      },],
+      }],
     }, {
       label: 'View',
       submenu: [{
@@ -120,7 +122,7 @@ app.on('ready', function() {
         click: function() {
           mainWindow.toggleDevTools();
         },
-      },],
+      }],
     }, {
       label: 'Window',
       submenu: [{
@@ -136,7 +138,7 @@ app.on('ready', function() {
       }, {
         label: 'Bring All to Front',
         selector: 'arrangeInFront:',
-      },],
+      }],
     }, {
       label: 'Help',
       submenu: [{
@@ -159,8 +161,8 @@ app.on('ready', function() {
         click: function() {
           require('shell').openExternal('https://github.com/atom/electron/issues');
         },
-      },],
-    },];
+      }],
+    }];
 
     menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
@@ -176,7 +178,7 @@ app.on('ready', function() {
         click: function() {
           mainWindow.close();
         },
-      },],
+      }],
     }, {
       label: '&View',
       submenu: [{
@@ -197,7 +199,7 @@ app.on('ready', function() {
         click: function() {
           mainWindow.toggleDevTools();
         },
-      },],
+      }],
     }, {
       label: 'Help',
       submenu: [{
@@ -220,8 +222,8 @@ app.on('ready', function() {
         click: function() {
           require('shell').openExternal('https://github.com/atom/electron/issues');
         },
-      },],
-    },];
+      }],
+    }];
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
   }
