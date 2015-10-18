@@ -60,7 +60,7 @@ let shouldExit = false;
 [
   'SIGTERM',
   'SIGINT',
-  'SIGKILL',
+  // 'SIGKILL', // Uncatchable :(
 ].forEach((signal) => {
   process.on(signal, function () {
     console.log(signal);
