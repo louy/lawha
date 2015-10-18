@@ -46,6 +46,15 @@ export function setServices(_services) {
   autoStart.forEach((key) => new Promise(function autostartService(resolve, reject) { actions._startService(resolve, reject, key); }));
 }
 
+// Be sure to kill all child processes
+process.on('exit', function() {
+  children.forEach((child) => {
+    if (child) {
+      child.kill('SIGKILL');
+    }
+  });
+});
+
 const ServicesStore = flux.createStore({
   actions: [
     actions.loadServices,
