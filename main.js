@@ -18,7 +18,9 @@ app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('ready', function() {
+function openMainWindow() {
+  if (mainWindow) return;
+
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 728,
@@ -240,4 +242,12 @@ app.on('ready', function() {
     console.error('Error while starting app');
     console.error(e);
   }
+}
+
+app.on('ready', function() {
+  openMainWindow();
+});
+
+app.on('activate', function() {
+  openMainWindow();
 });
