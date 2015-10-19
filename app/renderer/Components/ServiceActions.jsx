@@ -32,7 +32,7 @@ const ServiceActions = React.createClass({
     };
   },
 
-  willReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.service !== this.props.service) {
       this.setState({
         lastSignal: null,
