@@ -32,6 +32,14 @@ const ServiceActions = React.createClass({
     };
   },
 
+  willReceiveProps(nextProps) {
+    if (nextProps.service !== this.props.service) {
+      this.setState({
+        lastSignal: null,
+      });
+    }
+  },
+
   getNextSignal() {
     let lastSignal = this.state.lastSignal == null ? -1 : this.state.lastSignal;
     ++ lastSignal;
