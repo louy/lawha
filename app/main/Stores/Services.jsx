@@ -277,3 +277,27 @@ const ServicesStore = flux.createStore({
 });
 
 export default ServicesStore;
+
+export function beforeQuit() {
+  console.log('before quit');
+  children.forEach((child) => {
+    if (child) {
+      child.kill('SIGTERM');
+    }
+  });
+}
+
+export function willQuit(event) {
+  console.log('will quit');
+  children.forEach((child) => {
+    if (child) {
+      child.kill('SIGKILL');
+    }
+  });
+
+  if (!children.filter(i => !!i).length) {
+    console.log('No one is running');
+  } else {
+    event.preventDefault();
+  }
+}
