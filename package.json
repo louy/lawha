@@ -14,7 +14,7 @@
     "start-hot": "HOT=1 NODE_ENV=development electron .",
     "package": "node package.js",
     "package-all": "node package.js --all",
-    "quick-start": "npm install && npm run build && npm start"
+    "quick-start": "npm install && npm run build && npm run build-main && npm start"
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
