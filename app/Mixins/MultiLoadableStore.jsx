@@ -1,3 +1,8 @@
+import Promise from 'bluebird';
+
+import debug from 'debug';
+const log = debug('app:mixins:multi-loadable-store');
+
 /*
   To use this store, listen to some action and call `#triggerLoad(id)` when ready.
   It won't fire if a request already exists so use `#abort(id)` if you want to cancel it.
@@ -93,28 +98,27 @@ export default {
     this.errorMessage(id, null);
     this.emit(id + '.meta');
 
-    const _this = this;
-
-    this.requests[id] = this.getRequest(id, ...args).then(function done(data) {
-      _this.data(id, data);
-      _this.done && _this.done(id, data);
-      _this.emit(id + '.data');
+    this.requests[id] = Promise.resolve(this.getRequest(id, ...args)).bind(this).then(function done(data) {
       log('done', id, 'with response', data);
+
+      this.data(id, data);
+      if (this.done) this.done(id, data);
+      this.emit(id + '.data');
     }, function fail(err) {
-      _this.isError(id, true);
       log('fail', id, 'with response', err);
+      this.isError(id, true);
 
       if (err && err.message) {
-        _this.errorMessage(id, err.message);
+        this.errorMessage(id, err.message);
       } else {
-        _this.errorMessage(id, 'Unknown error');
+        this.errorMessage(id, 'Unknown error');
       }
 
-      _this.fail && _this.fail(id, err);
+      if (this.fail) this.fail(id, err);
     }).then(function always() {
-      _this.isLoading(id, false);
-      _this.always && _this.always(id);
-      _this.emit(id + '.meta');
+      this.isLoading(id, false);
+      if (this.always) this.always(id);
+      this.emit(id + '.meta');
     });
 
     return true;

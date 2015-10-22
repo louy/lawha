@@ -1,12 +1,14 @@
+import Promise from 'bluebird';
+
 import debug from 'debug';
 const log = debug('app:mixins:loadable-store');
 
 /*
   To use this store, listen to some action and call `#triggerLoad()` when ready.
-  It won't fire if a request already exists so use `#abort()` if you want to cancel it.
+  It won't fire if a request already exists so use `#cancel()` if you want to cancel it.
 
   You can also call `#reset()` to remove error state and message. If a request is running however,
-    it won't do anything. Use `#abort()` and then `#reset()` to make sure it's reset.
+    it won't do anything. Use `#cancel()` and then `#reset()` to make sure it's reset.
  */
 export default {
   /*
@@ -42,36 +44,36 @@ export default {
     this.errorMessage = null;
     this.emit('meta');
 
-    const _this = this;
-
-    this.request = this.getRequest(...args).then(function success(data) {
-      _this.data = data;
-      _this.done && _this.done.apply(_this, arguments);
-      _this.emit('data');
+    this.request = Promise.resolve(this.getRequest(...args)).bind(this).then(function success(data) {
       log('success', data);
+
+      this.data = data;
+      if (this.done) this.done.apply(this, arguments);
+      this.emit('data');
     }, function fail(err) {
-      _this.isError = true;
       log('fail', err);
 
+      this.isError = true;
+
       if (err && err.message) {
-        _this.errorMessage = err.message;
+        this.errorMessage = err.message;
       } else {
-        _this.errorMessage = 'Unknown error';
+        this.errorMessage = 'Unknown error';
       }
 
-      _this.fail && _this.fail.apply(_this, arguments);
+      if (this.fail) this.fail.apply(this, arguments);
     }).then(function always() {
-      _this.isLoading = false;
-      _this.always && _this.always.apply(_this, arguments);
-      _this.emit('meta');
+      this.isLoading = false;
+      if (this.always) this.always.apply(this, arguments);
+      this.emit('meta');
     });
 
     return true;
   },
 
-  abort() {
+  cancel() {
     if (this.request) {
-      this.request.abort();
+      this.request.cancel();
     }
   },
 
