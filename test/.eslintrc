@@ -1,1 +1,6 @@
-../app/.eslintrc
+{
+  "extends": "airbnb",
+  "env": {
+    "mocha": true
+  }
+}
