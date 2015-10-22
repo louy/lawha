@@ -21,7 +21,8 @@ const Sidebar = React.createClass({
       React.PropTypes.string,
       React.PropTypes.number,
     ]),
-    onChange: React.PropTypes.func,
+    onChange: React.PropTypes.func.isRequired,
+    onItemSelect: React.PropTypes.func.isRequired,
   },
 
   getDefaultProps() {
@@ -99,6 +100,7 @@ const Sidebar = React.createClass({
     return (
       <li className={className} key={item.id}
           onClick={() => this.props.onChange(item)}
+          onDoubleClick={() => this.props.onItemSelect(item)}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}>
         <span className="img-circle media-object pull-left" style={iconStyle}>{item.icon}</span>

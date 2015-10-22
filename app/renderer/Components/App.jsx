@@ -81,6 +81,11 @@ const App = React.createClass({
               let {id} = item;
               if (this.state.selectedId === id) id = null;
               this.setState({ selectedId: id });
+            }} onItemSelect={(item) => {
+              let {id} = item;
+              if (this.state.selectedId === id) id = null;
+              this.setState({ selectedId: id });
+              actions.startService(id);
             }} selectedId={selectedId} />
             <Body service={selectedId} />
           </div>
