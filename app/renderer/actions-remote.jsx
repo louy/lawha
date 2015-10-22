@@ -1,5 +1,5 @@
 // Actions
-import ipc from 'electron-safe-ipc/host';
+import ipc from 'electron-safe-ipc/guest';
 import _actions from '../shared/actions';
 
 import debug from 'debug';
