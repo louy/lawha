@@ -5,10 +5,10 @@ const log = debug('app:mixins:multi-loadable-store');
 
 /*
   To use this store, listen to some action and call `#triggerLoad(id)` when ready.
-  It won't fire if a request already exists so use `#abort(id)` if you want to cancel it.
+  It won't fire if a request already exists so use `#cancel(id)` if you want to cancel it.
 
   You can also call `#reset(id)` to remove error state and message. If a request is running however,
-    it won't do anything. Use `#abort(id)` and then `#reset(id)` to make sure it's reset.
+    it won't do anything. Use `#cancel(id)` and then `#reset(id)` to make sure it's reset.
 
   All functions require (and receive) and `id` argument as the first argument.
  */
@@ -71,9 +71,9 @@ export default {
     return this._data[id] || null;
   },
 
-  abort(id) {
+  cancel(id) {
     if (this.requests[id]) {
-      this.requests[id].abort();
+      this.requests[id].cancel();
     }
   },
 
