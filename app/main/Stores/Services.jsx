@@ -110,13 +110,20 @@ const ServicesStore = flux.createStore({
       return reject(err);
     }
 
+    const service = services[index];
+
+    if (children[index]) {
+      if (service.status === null) {
+        log('hmmm');
+        children[index].kill();
+      }
+    }
+
     if (children[index]) {
       const err = new Error('Service ' + serviceId + ' is already running');
       console.warn(err);
-      throw reject(err);
+      return reject(err);
     }
-
-    const service = services[index];
 
     service.output.push({
       type: 'command',
@@ -188,17 +195,21 @@ const ServicesStore = flux.createStore({
 
       child.stdin.setEncoding('utf-8');
 
-      child.on('close', function onClose(code) {
+      child.on('exit', function onExit(code) {
+        log(service.id + ' has exited', code);
+
         service.output.push({
           type: 'system',
           ts: +new Date(),
           data: 'child process exited with code ' + JSON.stringify(code) + '\n',
         });
+        ++ service.numberOfLines;
+
         service.status = code;
         service.lastChanged = +new Date();
+
         children[index] = null;
         child = null;
-        ++ service.numberOfLines;
 
         actionsRemote.loadService(serviceId); // Trigger a reload
 
@@ -228,7 +239,7 @@ const ServicesStore = flux.createStore({
     }
 
     if (!children[index]) {
-      throw reject({ message: 'Service ' + serviceId + ' is not running' });
+      return reject({ message: 'Service ' + serviceId + ' is not running' });
     }
 
     const child = children[index];
@@ -262,7 +273,7 @@ const ServicesStore = flux.createStore({
     }
 
     if (!children[index]) {
-      throw reject({ message: 'Service ' + serviceId + ' is not running' });
+      return reject({ message: 'Service ' + serviceId + ' is not running' });
     }
 
     const child = children[index];
