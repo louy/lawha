@@ -9,6 +9,9 @@ import actionsRpc from '../actions-rpc';
 
 import {bounce, cancelBounce} from '../dock';
 
+import debug from 'debug';
+const log = debug('app:stores:services');
+
 let services = [];
 
 let servicesMap = {};
@@ -73,12 +76,12 @@ let shouldExit = false;
     });
 
     if (!children.filter(i => !!i).length) {
-      console.log('No one is running');
+      log('No one is running');
       process.exit(0);
     }
 
     shouldExit = true;
-    console.log('not exiting');
+    log('not exiting');
   });
 });
 
@@ -95,6 +98,7 @@ const ServicesStore = flux.createStore({
   ],
 
   getServices(resolve) {
+    log('getServices', services);
     resolve(services);
   },
 
@@ -199,7 +203,7 @@ const ServicesStore = flux.createStore({
         actionsRemote.loadService(serviceId); // Trigger a reload
 
         if (shouldExit && !children.filter(i => !!i).length) {
-          console.log('last child has exited');
+          log('last child has exited');
           process.exit(code || 0);
         }
 
@@ -247,7 +251,7 @@ const ServicesStore = flux.createStore({
     }
 
     const service = services[index];
-
+    log('getService', 'resolved with', service);
     resolve(service);
   },
 
@@ -279,7 +283,7 @@ const ServicesStore = flux.createStore({
 export default ServicesStore;
 
 export function beforeQuit() {
-  console.log('before quit');
+  log('before quit');
   children.forEach((child) => {
     if (child) {
       child.kill('SIGTERM');
@@ -288,7 +292,7 @@ export function beforeQuit() {
 }
 
 export function willQuit(event) {
-  console.log('will quit');
+  log('will quit');
   children.forEach((child) => {
     if (child) {
       child.kill('SIGKILL');
@@ -296,7 +300,7 @@ export function willQuit(event) {
   });
 
   if (!children.filter(i => !!i).length) {
-    console.log('No one is running');
+    log('No one is running');
   } else {
     event.preventDefault();
   }

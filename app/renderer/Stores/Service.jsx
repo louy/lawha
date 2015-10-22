@@ -6,6 +6,9 @@ import actionsRpc from '../actions-rpc';
 
 import MultiLoadableStore from '../../Mixins/MultiLoadableStore';
 
+import debug from 'debug';
+const log = debug('app:stores:service');
+
 const ServiceStore = flux.createStore({
   mixins: [MultiLoadableStore],
 
@@ -36,11 +39,11 @@ const ServiceStore = flux.createStore({
       const parts = id.split('.');
       if (parts[1] === 'start') {
         const name = parts.slice(2).join('.');
-        console.log('Starting ', name);
+        log('Starting ', name);
         return actionsRpc._startService(name, ...args);
       } else if (parts[1] === 'stop') {
         const name = parts.slice(2).join('.');
-        console.log('Stopping ', name);
+        log('Stopping ', name);
         return actionsRpc._stopService(name, ...args);
       } else if (parts[1] === 'command') {
         const name = parts.slice(2).join('.');
@@ -56,7 +59,7 @@ const ServiceStore = flux.createStore({
   },
 
   done(id, data) {
-    console.log('done', id, data);
+    log('done', id, data);
     if (id === '_') {
       const map = {};
       data.forEach((service, index) => {
@@ -66,7 +69,7 @@ const ServiceStore = flux.createStore({
     } else if (id != null) {
       if (id.substr(0,2) === '_.') {
         const name = id.split('.').slice(2).join('.');
-        console.log('Reloading ', name);
+        log('Reloading ', name);
         actions.loadService(name);
         return;
       }
@@ -75,7 +78,7 @@ const ServiceStore = flux.createStore({
       const index = map[data.id];
       const _ = this.data('_') || [];
       if (index == null) {
-        console.log('New service!');
+        log('New service!');
         map[data.id] = _.length;
         _.push(data);
       } else {
@@ -88,10 +91,10 @@ const ServiceStore = flux.createStore({
   },
 
   fail(id, ...args) {
-    console.log('failed', id, ...args);
+    log('failed', id, ...args);
     if (id && id.substr(0,2) === '_.') {
       const name = id.split('.').slice(2).join('.');
-      console.log('Reloading ', name);
+      log('Reloading ', name);
       actions.loadService(name);
       return;
     }

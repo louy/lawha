@@ -99,8 +99,10 @@ export default {
       _this.data(id, data);
       _this.done && _this.done(id, data);
       _this.emit(id + '.data');
+      log('done', id, 'with response', data);
     }, function fail(err) {
       _this.isError(id, true);
+      log('fail', id, 'with response', err);
 
       if (err && err.message) {
         _this.errorMessage(id, err.message);

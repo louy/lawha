@@ -2,8 +2,11 @@
 import ipc from 'electron-safe-ipc/host';
 import _actions from '../shared/actions';
 
+import debug from 'debug';
+const log = debug('app:actions-remote');
+
 ipc.on('fromRenderer', function fromRenderer(action, ...args) {
-  console.log('fromRenderer', action, ...args);
+  log('fromRenderer', action, ...args);
   if (!_actions[action]) {
     const err = new Error('Unrecognised action: ' + action);
     console.warn(err);
@@ -16,6 +19,7 @@ const actions = {};
 
 Object.keys(_actions).forEach(action => {
   actions[action] = (...args) => {
+    log('send fromMain', action, ...args);
     return ipc.send('fromMain', action, ...args);
   };
   actions[action].on = (event, func) => {

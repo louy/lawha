@@ -1,3 +1,6 @@
+import debug from 'debug';
+const log = debug('app:mixins:loadable-store');
+
 /*
   To use this store, listen to some action and call `#triggerLoad()` when ready.
   It won't fire if a request already exists so use `#abort()` if you want to cancel it.
@@ -45,8 +48,10 @@ export default {
       _this.data = data;
       _this.done && _this.done.apply(_this, arguments);
       _this.emit('data');
+      log('success', data);
     }, function fail(err) {
       _this.isError = true;
+      log('fail', err);
 
       if (err && err.message) {
         _this.errorMessage = err.message;

@@ -2,16 +2,19 @@
 import ipc from 'electron-safe-ipc/host';
 import _actions from '../shared/actions';
 
+import debug from 'debug';
+const log = debug('app:actions-rpc');
+
 ipc.respond('fromRenderer', function fromRenderer(action, ...args) {
-  console.log('fromRenderer', action, ...args);
+  log('fromRenderer', action, ...args);
   if (!_actions[action]) {
     const err = new Error('Unrecognised action: ' + action);
     console.warn(err);
     return err;
   }
 
+  log('exec rpc', action, ...args);
   return new Promise((resolve, reject) => {
-    console.log('calling ' + action, ...args);
     _actions[action](resolve, reject, ...args);
   });
 });
@@ -20,6 +23,7 @@ const actions = {};
 
 Object.keys(_actions).forEach(action => {
   actions[action] = (...args) => {
+    log('sending rpc', action, ...args);
     return ipc.request('fromMain', action, ...args);
   };
 
