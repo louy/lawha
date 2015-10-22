@@ -85,6 +85,28 @@ let shouldExit = false;
   });
 });
 
+function addOutputToService(service, output) {
+  let newLines = output.data.split('\n').length;
+
+  const {length} = service.output;
+  if (service.output.length && output.type === service.output[length - 1].type) {
+    service.output[length - 1].data += output.data;
+    service.output[length - 1].ts = output.ts;
+    -- newLines;
+  } else {
+    if (length > 100) {
+      const newOutput = (new Array(length - 100)).concat(service.output.slice(length - 100));
+      service.output = newOutput.concat([output]);
+    } else {
+      service.output.push(output);
+    }
+  }
+
+  service.numberOfLines += newLines;
+
+  actionsRemote.loadService(service.id); // Trigger a reload
+}
+
 const ServicesStore = flux.createStore({
   actions: [
     actionsRpc.getServices,
@@ -125,12 +147,11 @@ const ServicesStore = flux.createStore({
       return reject(err);
     }
 
-    service.output.push({
+    addOutputToService(service, {
       type: 'command',
       ts: +new Date(),
       data: service.command + ' ' + (service.args || []).join(' '),
     });
-    ++ service.numberOfLines;
 
     if (service.bounceId) {
       cancelBounce(service.bounceId);
@@ -141,12 +162,11 @@ const ServicesStore = flux.createStore({
         cwd: service.cwd,
         env: process.env,
       }).on('error', (err) => {
-        service.output.push({
+        addOutputToService(service, {
           type: 'system',
           ts: +new Date(),
           data: 'child process error ' + JSON.stringify(err) + '\n',
         });
-        ++ service.numberOfLines;
       });
       children[index] = child;
       service.status = true;
@@ -154,43 +174,22 @@ const ServicesStore = flux.createStore({
 
       child.stdout.setEncoding('utf8');
       child.stdout.on('data', function onStdout(data) {
-        const lines = data.split('\n').length - 1;
-        service.numberOfLines += lines;
-
-        const lastChunk = service.output[service.output.length - 1];
-        if (lastChunk && lastChunk.type === 'stdout') {
-          lastChunk.data += data;
-          lastChunk.ts = +new Date();
-        } else {
-          service.output.push({
-            type: 'stdout',
-            ts: +new Date(),
-            data,
-          });
-        }
-
-        actionsRemote.loadService(serviceId); // Trigger a reload
+        addOutputToService(service, {
+          type: 'stdout',
+          ts: +new Date(),
+          data,
+        });
       });
 
       child.stderr.setEncoding('utf8');
       child.stderr.on('data', function onStderr(data) {
-        const lines = data.split('\n').length - 1;
-        service.numberOfLines += lines;
-
-        const lastChunk = service.output[service.output.length - 1];
-        if (lastChunk && lastChunk.type === 'stderr') {
-          lastChunk.data += data;
-          lastChunk.ts = +new Date();
-        } else {
-          service.output.push({
-            type: 'stderr',
-            ts: +new Date(),
-            data,
-          });
-        }
-
         service.lastChanged = +new Date();
-        actionsRemote.loadService(serviceId); // Trigger a reload
+
+        addOutputToService(service, {
+          type: 'stderr',
+          ts: +new Date(),
+          data,
+        });
       });
 
       child.stdin.setEncoding('utf-8');
@@ -198,20 +197,17 @@ const ServicesStore = flux.createStore({
       child.on('exit', function onExit(code) {
         log(service.id + ' has exited', code);
 
-        service.output.push({
+        service.status = code;
+        service.lastChanged = +new Date();
+
+        addOutputToService(service, {
           type: 'system',
           ts: +new Date(),
           data: 'child process exited with code ' + JSON.stringify(code) + '\n',
         });
-        ++ service.numberOfLines;
-
-        service.status = code;
-        service.lastChanged = +new Date();
 
         children[index] = null;
         child = null;
-
-        actionsRemote.loadService(serviceId); // Trigger a reload
 
         if (shouldExit && !children.filter(i => !!i).length) {
           log('last child has exited');
@@ -244,12 +240,11 @@ const ServicesStore = flux.createStore({
 
     const child = children[index];
     const service = services[index];
-    service.output.push({
+    addOutputToService(service, {
       type: 'signal',
       ts: +new Date(),
       data: signal,
     });
-    ++ service.numberOfLines;
 
     child.kill(signal);
     resolve();
@@ -280,12 +275,11 @@ const ServicesStore = flux.createStore({
     const service = services[index];
 
     child.stdin.write(command);
-    service.output.push({
+    addOutputToService(service, {
       type: 'stdin',
       ts: +new Date(),
       data: command + '\n',
     });
-    ++ service.numberOfLines;
 
     resolve();
   },
