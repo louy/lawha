@@ -93,6 +93,8 @@ const Console = React.createClass({
   },
 
   renderChunk(chunk) {
+    if (!chunk) return null;
+
     const {type, ts, data} = chunk;
 
     let __html;
