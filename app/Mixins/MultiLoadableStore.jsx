@@ -31,15 +31,10 @@ export default {
     The rest is private.
    */
 
-  // Don't modify these manually. Use helper functions below instead.
-  _isLoading: {},
-  _isError: {},
-  _errorMessage: {},
-  _data: {},
-  requests: {},
-
   // Helper functions
   isLoading(id, value) {
+    this._isLoading = this._isLoading || {};
+
     if (value !== undefined) {
       this._isLoading[id] = value;
     }
@@ -48,6 +43,8 @@ export default {
   },
 
   isError(id, value) {
+    this._isError = this._isError || {};
+
     if (value !== undefined) {
       this._isError[id] = value;
     }
@@ -56,6 +53,8 @@ export default {
   },
 
   errorMessage(id, value) {
+    this._errorMessage = this._errorMessage || {};
+
     if (value !== undefined) {
       this._errorMessage[id] = value;
     }
@@ -64,6 +63,8 @@ export default {
   },
 
   data(id, value) {
+    this._data = this._data || {};
+
     if (value !== undefined) {
       this._data[id] = value;
     }
@@ -72,6 +73,8 @@ export default {
   },
 
   cancel(id) {
+    this.requests = this.requests || {};
+
     if (this.requests[id]) {
       this.requests[id].cancel();
     }
@@ -88,6 +91,8 @@ export default {
   },
 
   triggerLoad(id, ...args) {
+    this.requests = this.requests || {};
+
     if (this.isLoading(id)) return false;
 
     if (!this.getRequest) throw new Error('`getRequest` is not implemented.');
