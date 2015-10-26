@@ -73,6 +73,10 @@ const ServiceStore = flux.createStore({
         actions.loadService(name);
         return;
       }
+      if (!data) {
+        console.log('unexpected response', id, data);
+        return;
+      }
 
       const {map} = this;
       const index = map[data.id];

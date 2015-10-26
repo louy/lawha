@@ -40,7 +40,9 @@ const Body = React.createClass({
       this.setState({
         service: this.props.service,
       });
-      actions.loadService(nextProps.service);
+      if (nextProps.service) {
+        actions.loadService(nextProps.service);
+      }
     }
   },
 
