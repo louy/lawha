@@ -2,8 +2,6 @@ import {exec} from 'child_process';
 
 import flux from 'flux-react';
 
-import actions from '../actions';
-import actionsRemote from '../actions-remote';
 import actionsRpc from '../actions-rpc';
 
 const CommandsStore = flux.createStore({
@@ -16,8 +14,8 @@ const CommandsStore = flux.createStore({
       exec(command);
 
       resolve();
-    } catch(e) {
-      reject(e);
+    } catch (err) {
+      reject(err);
     }
   },
 });

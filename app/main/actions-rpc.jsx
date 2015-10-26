@@ -1,30 +1,25 @@
-// Actions
 import ipc from 'electron-safe-ipc/host';
 import _actions from '../shared/actions';
 
 import debug from 'debug';
 const log = debug('app:actions-rpc');
 
-ipc.respond('fromRenderer', function fromRenderer(action, ...args) {
-  log('fromRenderer', action, ...args);
-  if (!_actions[action]) {
-    const err = new Error('Unrecognised action: ' + action);
-    console.warn(err);
-    return err;
-  }
-
-  log('exec rpc', action, ...args);
-  return new Promise((resolve, reject) => {
-    _actions[action](resolve, reject, ...args);
-  });
-});
-
 const actions = {};
 
 Object.keys(_actions).forEach(action => {
+  ipc.respond('host.' + action, function gotRequest(...args) {
+    log('exec rpc', action, ...args);
+    return new Promise((resolve, reject) => {
+      _actions[action]((...all) => {
+        log('resolving %s %j with %j', action, args, ...all);
+        resolve(...all);
+      }, reject, ...args);
+    });
+  });
+
   actions[action] = (...args) => {
     log('sending rpc', action, ...args);
-    return ipc.request('fromMain', action, ...args);
+    return ipc.request('guest.' + action, ...args);
   };
 
   actions[action].on = (event, func) => {
