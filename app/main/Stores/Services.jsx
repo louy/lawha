@@ -1,5 +1,6 @@
 // http://nodejs.org/api.html#_child_processes
 import {spawn} from 'child_process';
+import util from 'util';
 
 import flux from 'flux-react';
 
@@ -52,39 +53,6 @@ export function setServices(_services) {
   autoStart.forEach((key) => new Promise(function autostartService(resolve, reject) { actions._startService(resolve, reject, key); }));
 }
 
-// Be sure to kill all child processes
-process.on('exit', function() {
-  children.forEach((child) => {
-    if (child) {
-      child.kill('SIGKILL');
-    }
-  });
-});
-
-let shouldExit = false;
-[
-  'SIGTERM',
-  'SIGINT',
-  // 'SIGKILL', // Uncatchable :(
-].forEach((signal) => {
-  process.on(signal, function () {
-    console.log(signal);
-    children.forEach((child) => {
-      if (child) {
-        child.kill(signal);
-      }
-    });
-
-    if (!children.filter(i => !!i).length) {
-      log('No one is running');
-      process.exit(0);
-    }
-
-    shouldExit = true;
-    log('not exiting');
-  });
-});
-
 function addOutputToService(service, output) {
   let newLines = output.data.split('\n').length;
 
@@ -107,6 +75,51 @@ function addOutputToService(service, output) {
   actionsRemote.loadService(service.id); // Trigger a reload
 }
 
+function stopService(index, signal = 'SIGTERM') {
+  const child = children[index];
+  const service = services[index];
+  addOutputToService(service, {
+    type: 'signal',
+    ts: +new Date(),
+    data: signal,
+  });
+
+  child.kill(signal);
+}
+
+// Be sure to kill all child processes
+process.on('exit', function() {
+  children.forEach((child, index) => {
+    if (child) {
+      stopService(index, 'SIGKILL');
+    }
+  });
+});
+
+let shouldExit = false;
+[
+  'SIGTERM',
+  'SIGINT',
+  // 'SIGKILL', // Uncatchable :(
+].forEach((signal) => {
+  process.on(signal, function () {
+    console.log(signal);
+    children.forEach((child, index) => {
+      if (child) {
+        stopService(index, 'SIGKILL');
+      }
+    });
+
+    if (children.some(child => !!child)) {
+      shouldExit = true;
+      log('not exiting');
+    } else {
+      log('No one is running');
+      process.exit(0);
+    }
+  });
+});
+
 const ServicesStore = flux.createStore({
   actions: [
     actionsRpc.getServices,
@@ -120,13 +133,13 @@ const ServicesStore = flux.createStore({
   ],
 
   getServices(resolve) {
-    log('getServices', services);
     resolve(services);
   },
 
   _startService(resolve, reject, serviceId) {
     const index = servicesMap[serviceId];
     if (index == null) {
+      console.log('arguments', arguments);
       const err = new Error('Service ' + serviceId + ' doesn\'t exist');
       console.warn(err);
       return reject(err);
@@ -137,7 +150,7 @@ const ServicesStore = flux.createStore({
     if (children[index]) {
       if (service.status === null) {
         log('hmmm');
-        children[index].kill();
+        stopService(index);
       }
     }
 
@@ -157,15 +170,16 @@ const ServicesStore = flux.createStore({
       cancelBounce(service.bounceId);
     }
 
+    let child;
     try {
-      let child = spawn(service.command, service.args || [], {
+      child = spawn(service.command, service.args || [], {
         cwd: service.cwd,
         env: process.env,
       }).on('error', (err) => {
         addOutputToService(service, {
           type: 'system',
           ts: +new Date(),
-          data: 'child process error ' + JSON.stringify(err) + '\n',
+          data: 'child process ' + (child ? child.pid : '') + ' error ' + JSON.stringify(err) + '\n',
         });
       });
       children[index] = child;
@@ -218,13 +232,13 @@ const ServicesStore = flux.createStore({
       });
 
       resolve();
-    } catch (e) {
+    } catch (err) {
       if (child) {
-        console.error('Child ' + serviceId + ' is still running!');
+        console.error('Child ' + serviceId + ' (pid: %s) is still running!', child.pid);
       }
 
-      console.error(require('util').inspect(e));
-      reject(e);
+      console.error(util.inspect(err));
+      reject(err);
     }
   },
 
@@ -238,15 +252,7 @@ const ServicesStore = flux.createStore({
       return reject({ message: 'Service ' + serviceId + ' is not running' });
     }
 
-    const child = children[index];
-    const service = services[index];
-    addOutputToService(service, {
-      type: 'signal',
-      ts: +new Date(),
-      data: signal,
-    });
-
-    child.kill(signal);
+    stopService(index, signal);
     resolve();
   },
 
@@ -289,24 +295,24 @@ export default ServicesStore;
 
 export function beforeQuit() {
   log('before quit');
-  children.forEach((child) => {
+  children.forEach((child, index) => {
     if (child) {
-      child.kill('SIGTERM');
+      stopService(index, 'SIGTERM');
     }
   });
 }
 
 export function willQuit(event) {
   log('will quit');
-  children.forEach((child) => {
+  children.forEach((child, index) => {
     if (child) {
-      child.kill('SIGKILL');
+      stopService(index, 'SIGKILL');
     }
   });
 
-  if (!children.filter(i => !!i).length) {
-    log('No one is running');
-  } else {
+  if (children.some(child => !!child)) {
     event.preventDefault();
+  } else {
+    log('No one is running');
   }
 }
