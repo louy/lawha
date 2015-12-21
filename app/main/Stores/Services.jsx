@@ -50,7 +50,15 @@ export function setServices(_services) {
 
   generateMap();
 
-  autoStart.forEach((key) => new Promise(function autostartService(resolve, reject) { actions._startService(resolve, reject, key); }));
+  setTimeout(() =>
+    autoStart.reduce((promise, key) =>
+      promise.then(() =>
+        new Promise(function autostartService(resolve, reject) {
+          actions._startService(resolve, reject, key);
+        })
+      ), Promise.resolve()
+    )
+  , 1000);
 }
 
 function addOutputToService(service, output) {
