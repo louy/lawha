@@ -14,8 +14,9 @@ import {bounce, cancelBounce} from '../dock';
 import debug from 'debug';
 const log = debug('app:stores:services');
 
-let services = [];
+const OUTPUT_LIMIT = 50;
 
+let services = [];
 let servicesMap = {};
 
 function generateMap() {
@@ -71,8 +72,8 @@ function addOutputToService(service, output) {
     service.output[length - 1].ts = output.ts;
     -- newLines;
   } else {
-    if (length > 100) {
-      const newOutput = (new Array(length - 100)).concat(service.output.slice(length - 100));
+    if (length > OUTPUT_LIMIT) {
+      const newOutput = (new Array(length - OUTPUT_LIMIT)).concat(service.output.slice(length - 100));
       service.output = newOutput.concat([output]);
     } else {
       service.output.push(output);
