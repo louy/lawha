@@ -84,7 +84,8 @@ function stopService(index, signal = 'SIGTERM') {
     data: signal,
   });
 
-  child.kill(signal);
+  // use a negative value to kill process group
+  child.kill(-signal);
 }
 
 // Be sure to kill all child processes
@@ -210,6 +211,10 @@ const ServicesStore = flux.createStore({
 
       child.on('exit', function onExit(code) {
         log(service.id + ' has exited', code);
+      });
+
+      child.on('close', function onClosed(code) {
+        log(service.id + ' has been closed', code);
 
         service.status = code;
         service.lastChanged = +new Date();
@@ -217,7 +222,7 @@ const ServicesStore = flux.createStore({
         addOutputToService(service, {
           type: 'system',
           ts: +new Date(),
-          data: 'child process exited with code ' + JSON.stringify(code) + '\n',
+          data: 'child process closed with code ' + JSON.stringify(code) + '\n',
         });
 
         children[index] = null;

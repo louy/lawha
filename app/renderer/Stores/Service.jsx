@@ -63,6 +63,9 @@ const ServiceStore = flux.createStore({
     if (id === '_') {
       const map = {};
       data.forEach((service, index) => {
+        if (!service) {
+          console.log('service doesn\'t exist', service);
+        }
         map[service.id] = index;
       });
       this.map = map;
