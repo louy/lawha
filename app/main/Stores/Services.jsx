@@ -1,6 +1,7 @@
 // http://nodejs.org/api.html#_child_processes
 import {spawn} from 'child_process';
 import util from 'util';
+import debounce from 'js-debounce';
 
 import flux from 'flux-react';
 
@@ -80,7 +81,9 @@ function addOutputToService(service, output) {
 
   service.numberOfLines += newLines;
 
-  actionsRemote.loadService(service.id); // Trigger a reload
+  debounce('loadService.' + service.id, 500, () => {
+    actionsRemote.loadService(service.id); // Trigger a reload
+  });
 }
 
 function stopService(index, signal = 'SIGTERM') {
