@@ -73,7 +73,7 @@ function addOutputToService(service, output) {
     -- newLines;
   } else {
     if (length > OUTPUT_LIMIT) {
-      const newOutput = (new Array(length - OUTPUT_LIMIT)).concat(service.output.slice(length - 100));
+      const newOutput = service.output.slice(length - 100);
       service.output = newOutput.concat([output]);
     } else {
       service.output.push(output);
