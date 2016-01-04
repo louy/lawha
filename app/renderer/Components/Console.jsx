@@ -73,7 +73,7 @@ const Console = React.createClass({
 
   sendInput() {
     const input = React.findDOMNode(this.refs.input);
-    this.props.onCommand(input.value);
+    this.props.onCommand(input.value + '\n');
     input.value = '';
   },
 
